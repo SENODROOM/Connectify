@@ -1,6 +1,6 @@
+
 #include <iostream>
 #include <cstring>
-#include <string>
 using namespace std;
 
 class User {
@@ -144,7 +144,7 @@ public:
 				cout << "already friends" << endl;
 				return;
 			}
-	// check if both follow each other
+		// check if both follow each other
 		bool mutual = false;
 		for (int i = 0; i < u->followingCount; i++) {
 			if (u->following[i] == this) {
@@ -153,7 +153,7 @@ public:
 			}
 		}
 
-		follow(u); 
+		follow(u);
 
 		if (mutual) {
 			resize(friends, friendCount);
@@ -232,14 +232,14 @@ int login(string u, string pass) {
 	return -1;
 }
 
-void removeUserReferences(User* target) {
+void removeUserReferences(int targetID) {
 	for (int i = 0; i < userCount; i++) {
 		User* u = &user[i];
-		if (u == target) continue;
+		if (u->userID == targetID) continue;
 
 		// Remove from friends
 		for (int j = 0; j < u->friendCount; j++) {
-			if (u->friends[j] == target) {
+			if (u->friends[j]->userID == targetID) {
 				for (int k = j; k < u->friendCount - 1; k++)
 					u->friends[k] = u->friends[k + 1];
 				u->friendCount--;
@@ -248,7 +248,7 @@ void removeUserReferences(User* target) {
 		}
 		// Remove from requests
 		for (int j = 0; j < u->requestCount; j++) {
-			if (u->request[j] == target) {
+			if (u->request[j]->userID == targetID) {
 				for (int k = j; k < u->requestCount - 1; k++)
 					u->request[k] = u->request[k + 1];
 				u->requestCount--;
@@ -257,7 +257,7 @@ void removeUserReferences(User* target) {
 		}
 		// Remove from followers
 		for (int j = 0; j < u->followerCount; j++) {
-			if (u->follower[j] == target) {
+			if (u->follower[j]->userID == targetID) {
 				for (int k = j; k < u->followerCount - 1; k++)
 					u->follower[k] = u->follower[k + 1];
 				u->followerCount--;
@@ -266,7 +266,7 @@ void removeUserReferences(User* target) {
 		}
 		// Remove from following
 		for (int j = 0; j < u->followingCount; j++) {
-			if (u->following[j] == target) {
+			if (u->following[j]->userID == targetID) {
 				for (int k = j; k < u->followingCount - 1; k++)
 					u->following[k] = u->following[k + 1];
 				u->followingCount--;
@@ -281,7 +281,9 @@ void deleteAccount(int index) {
 		cout << "no such user account found" << endl;
 		return;
 	}
-	removeUserReferences(&user[index]);
+	// FIX: save the userID before shifting, then match by ID not pointer
+	int targetID = user[index].userID;
+	removeUserReferences(targetID);
 	for (int i = index; i < userCount - 1; i++)
 		user[i] = user[i + 1];
 	userCount--;
@@ -301,7 +303,8 @@ void adminDelete(int adminIndex, string u) {
 		cout << "no such user account found" << endl;
 		return;
 	}
-	removeUserReferences(&user[index]);
+	int targetID = user[index].userID;
+	removeUserReferences(targetID);
 	for (int i = index; i < userCount - 1; i++)
 		user[i] = user[i + 1];
 	userCount--;
@@ -320,4 +323,3 @@ void display(int adminIndex) {
 		cout << "-------------------------" << endl;
 	}
 }
-
