@@ -11,14 +11,14 @@
 
 **A C++ Social Media Management System**
 
-_Built with Object-Oriented Programming · WinForms GUI · File Persistence_
+_Built with Object-Oriented Programming · Qt6 GUI · File Persistence_
 
 ---
 
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)
-![WinForms](https://img.shields.io/badge/WinForms-GUI-512BD4?style=for-the-badge&logo=windows&logoColor=white)
+![Qt](https://img.shields.io/badge/Qt-6-41CD52?style=for-the-badge&logo=qt&logoColor=white)
+![CMake](https://img.shields.io/badge/CMake-3.16+-064F8C?style=for-the-badge&logo=cmake&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-In%20Development-22c55e?style=for-the-badge)
-![Semester](https://img.shields.io/badge/Spring-2nd%20Semester-f59e0b?style=for-the-badge)
 ![Team](https://img.shields.io/badge/Team-05%20%7C%20BSE--2B-ef4444?style=for-the-badge)
 
 </div>
@@ -32,11 +32,13 @@ _Built with Object-Oriented Programming · WinForms GUI · File Persistence_
 - [OOP Concepts](#-oop-concepts)
 - [Class Architecture](#-class-architecture)
 - [Complete Development Roadmap](#-complete-development-roadmap)
+  - [Phase 0 — Qt Setup](#phase-0--qt-setup-before-week-1)
   - [Phase 1 — Foundation](#phase-1--foundation-week-1-2)
   - [Phase 2 — Core Features](#phase-2--core-features-week-3-4)
   - [Phase 3 — Social Engine](#phase-3--social-engine-week-5-6)
-  - [Phase 4 — GUI & Polish](#phase-4--gui--polish-week-7-8)
+  - [Phase 4 — Qt GUI & Polish](#phase-4--qt-gui--polish-week-7-8)
   - [Phase 5 — Testing & Submission](#phase-5--testing--submission-week-9)
+- [Qt Concepts Used](#-qt-concepts-used-in-connectify)
 - [File Structure](#-file-structure)
 - [Data Storage Format](#-data-storage-format)
 - [How to Build & Run](#-how-to-build--run)
@@ -46,28 +48,28 @@ _Built with Object-Oriented Programming · WinForms GUI · File Persistence_
 
 ## 📖 About
 
-**Connectify** is a C++ WinForms application that simulates a modern digital social networking platform. Built on rock-solid OOP principles, it handles complex user relationships, content flow, and private communication — all wrapped in an interactive GUI.
+**Connectify** is a cross-platform C++ application built with **Qt6** that simulates a modern social networking platform. It combines rock-solid OOP principles with Qt's powerful signal-slot architecture, custom widgets, and QSS styling to deliver a professional, native-feeling GUI on Windows, macOS, and Linux.
 
 > _"Bridging theoretical OOP concepts with practical software engineering."_
 
-The system implements a **Role-Based Access Control (RBAC)** model with distinct `Admin` and `User` roles derived from a common `Person` base class, ensuring clean separation of privileges throughout the entire codebase.
+The system uses **Role-Based Access Control (RBAC)** via `Admin` and `User` classes derived from a common `Person` base, and leverages Qt's `QStackedWidget` for seamless screen navigation — no messy window management required.
 
 ---
 
 ## ✨ Features
 
-| #   | Feature                     | Description                             | OOP Concept              |
-| --- | --------------------------- | --------------------------------------- | ------------------------ |
-| 1   | 🔐 **User Management**      | Secure Login, Signup & Account Deletion | Encapsulation            |
-| 2   | 🛡️ **Admin Command Center** | View users, delete posts, ban accounts  | Inheritance + RBAC       |
-| 3   | 📰 **Dynamic News Feed**    | Real-time posts from followed users     | Pointers, Polymorphism   |
-| 4   | 🖼️ **Multimedia Posts**     | Text & image-based posts                | Inheritance, Abstraction |
-| 5   | 🤝 **Social Graph**         | Friend requests, followers, connections | Data Structures          |
-| 6   | ❤️ **Engagement Module**    | Likes & Comments on posts               | Composition              |
-| 7   | 💬 **Private Messaging**    | Secure one-to-one user chat             | Encapsulation            |
-| 8   | 🔍 **Search & Discovery**   | Search users or posts by keyword        | Algorithms               |
-| 9   | 💾 **Persistent Storage**   | Full save/load via `fstream`            | File Handling            |
-| 10  | 🔔 **Notification Engine**  | Real-time alerts for activity           | Observer Pattern         |
+| #   | Feature                     | Description                             | OOP / Qt Concept             |
+| --- | --------------------------- | --------------------------------------- | ---------------------------- |
+| 1   | 🔐 **User Management**      | Secure Login, Signup & Account Deletion | Encapsulation, `QLineEdit`   |
+| 2   | 🛡️ **Admin Command Center** | View users, delete posts, ban accounts  | Inheritance + RBAC           |
+| 3   | 📰 **Dynamic News Feed**    | Real-time posts from followed users     | Polymorphism, `QScrollArea`  |
+| 4   | 🖼️ **Multimedia Posts**     | Text & image-based posts                | Abstraction, `QLabel` pixmap |
+| 5   | 🤝 **Social Graph**         | Friend requests, followers, connections | Data Structures              |
+| 6   | ❤️ **Engagement Module**    | Likes & Comments on posts               | Signals & Slots              |
+| 7   | 💬 **Private Messaging**    | Secure one-to-one user chat             | `QListWidget`, `QTextEdit`   |
+| 8   | 🔍 **Search & Discovery**   | Search users or posts by keyword        | `QLineEdit`, filtering       |
+| 9   | 💾 **Persistent Storage**   | Full save/load via `fstream`            | File Handling                |
+| 10  | 🔔 **Notification Engine**  | Real-time alerts for all activity       | Qt Signals & Slots           |
 
 ---
 
@@ -82,15 +84,17 @@ The system implements a **Role-Based Access Control (RBAC)** model with distinct
 ├─────────────────────┼──────────────────────────────────────────────────────────────────────┤
 │ 🧬 Inheritance      │ Person (base) → Admin, User (derived).                               │
 │                     │ Post (base) → TextPost, ImagePost (derived).                         │
+│                     │ QWidget → all custom Qt screens (LoginPage, FeedPage, etc.)          │
 ├─────────────────────┼──────────────────────────────────────────────────────────────────────┤
 │ 🎭 Abstraction      │ Abstract Post class exposes display() interface.                     │
 │                     │ News Feed renders posts without knowing their concrete type.          │
 ├─────────────────────┼──────────────────────────────────────────────────────────────────────┤
 │ 🔄 Polymorphism     │ display() overridden in TextPost & ImagePost.                        │
 │                     │ Polymorphic calls via Post* pointer vectors.                         │
+│                     │ Qt virtual paintEvent() for custom widget rendering.                 │
 ├─────────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ 💾 File Handling    │ fstream serializes all objects: users, posts, messages,               │
-│                     │ friendship graphs → .dat files for persistence.                      │
+│ 💾 File Handling    │ fstream serializes all objects → .dat files for persistence.         │
+│                     │ QFile / QTextStream usable as Qt-native alternative.                 │
 └─────────────────────┴──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -142,10 +146,10 @@ The system implements a **Role-Based Access Control (RBAC)** model with distinct
     │      TextPost       │                      │      ImagePost      │
     │─────────────────────│                      │─────────────────────│
     │ - content: string   │                      │ - imagePath: string │
-    │ - caption: string   │                      │ - caption: string   │
-    │─────────────────────│                      │─────────────────────│
-    │ + display() overr.  │                      │ + display() overr.  │
-    └─────────────────────┘                      └─────────────────────┘
+    │─────────────────────│                      │ - caption: string   │
+    │ + display() overr.  │                      │─────────────────────│
+    └─────────────────────┘                      │ + display() overr.  │
+                                                 └─────────────────────┘
 
     ┌─────────────────────┐     ┌─────────────────────┐
     │      Message        │     │    Notification     │
@@ -153,285 +157,417 @@ The system implements a **Role-Based Access Control (RBAC)** model with distinct
     │ - sender: User*     │     │ - type: NotifType   │
     │ - receiver: User*   │     │ - message: string   │
     │ - content: string   │     │ - isRead: bool      │
-    │ - timestamp: time_t │     │─────────────────────│
-    └─────────────────────┘     │ + markRead()        │
-                                └─────────────────────┘
+    │ - timestamp: time_t │     └─────────────────────┘
+    └─────────────────────┘
+
+    ┌─────────────────────────────────────────────────────────┐
+    │                   Qt GUI Layer                          │
+    │─────────────────────────────────────────────────────────│
+    │  MainWindow (QMainWindow)                               │
+    │    └── QStackedWidget                                   │
+    │          ├── LoginPage    : public QWidget              │
+    │          ├── SignupPage   : public QWidget              │
+    │          ├── FeedPage     : public QWidget              │
+    │          ├── ProfilePage  : public QWidget              │
+    │          ├── MessagesPage : public QWidget              │
+    │          ├── SearchPage   : public QWidget              │
+    │          ├── NotifsPage   : public QWidget              │
+    │          └── AdminPage    : public QWidget              │
+    └─────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 🗺️ Complete Development Roadmap
 
-> **Total Duration:** 9 Weeks | **Team Size:** 6 | **Stack:** C++17 · WinForms · fstream
+> **Total Duration:** 9 Weeks | **Team Size:** 6 | **Stack:** C++17 · Qt6 · fstream
+
+---
+
+### Phase 0 — Qt Setup `Before Week 1`
+
+> _Everyone on the team must complete this before coding begins._
+
+```
+Every team member:
+├── [ ] Install Qt 6.x (Community/Open Source — free)
+│         Download: https://www.qt.io/download-open-source
+│         During install, select:
+│           ✔ Qt 6.x.x → Desktop (MinGW or MSVC depending on your compiler)
+│           ✔ Qt Creator IDE
+│           ✔ CMake (bundled)
+│
+├── [ ] Launch Qt Creator → New Project → Qt Widgets Application
+│         Project name: Connectify
+│         Build system: CMake
+│         Class name: MainWindow   Base class: QMainWindow
+│
+├── [ ] Confirm the default project builds and runs (empty window appears)
+│
+├── [ ] Learn these Qt basics before Phase 1 (30 min each):
+│         • Signals & Slots — how Qt widgets communicate
+│           https://doc.qt.io/qt-6/signalsandslots.html
+│         • QStackedWidget — swapping pages without opening new windows
+│           https://doc.qt.io/qt-6/qstackedwidget.html
+│         • Qt Stylesheet (QSS) — CSS-like styling for Qt widgets
+│           https://doc.qt.io/qt-6/stylesheet.html
+│
+└── [ ] Initialize GitHub repo, push the empty Qt project, everyone pulls
+```
 
 ---
 
 ### Phase 1 — Foundation `Week 1-2`
 
-> _Set up the project, define all classes, implement the data layer._
+> _Define all classes, implement the data layer, no GUI yet._
 
 #### ✅ Week 1 — Project Setup & Class Design
 
-**Goal:** Every team member working in the same repo with agreed-upon class contracts.
+**Goal:** Agreed-upon class contracts. Every header file finalized before bodies are written.
 
 ```
 Tasks:
-├── [ ] Create Visual Studio WinForms project (C++/CLI)
-├── [ ] Initialize GitHub repo + set branching strategy
-│         main ← stable releases only
-│         dev  ← integration branch
-│         feature/* ← one branch per feature
-├── [ ] Write Person.h       — base class: name, email, password (private)
+├── [ ] Organize project into folders (see File Structure section)
+├── [ ] Write Person.h       — base: name, email, password (private)
 ├── [ ] Write User.h         — derived from Person, stub all methods
 ├── [ ] Write Admin.h        — derived from Person, stub all methods
 ├── [ ] Write Post.h         — abstract class with pure virtual display()
 ├── [ ] Write TextPost.h / ImagePost.h  — concrete post classes
 ├── [ ] Write Message.h      — one-to-one message struct
-├── [ ] Write Notification.h — notification struct with NotifType enum
-└── [ ] Team: review and agree on ALL header files before coding bodies
+├── [ ] Write Notification.h — NotifType enum + notification struct
+└── [ ] Team review: ALL headers agreed before anyone writes a .cpp
 ```
 
-> **Deliverable:** All `.h` files finalized. Every member compiled a "Hello World" WinForms window.
+> **Deliverable:** All `.h` files committed. Everyone has compiled the empty Qt window.
 
 ---
 
-#### ✅ Week 2 — Core Logic (Console Only, No GUI)
+#### ✅ Week 2 — Core Logic (No GUI)
 
-**Goal:** All business logic working and testable in a console harness.
+**Goal:** All business logic working and testable without touching Qt.
 
 ```
 Tasks:
 ├── [ ] Implement Person.cpp    — constructor, login(), getProfile()
-├── [ ] Implement User.cpp      — follow(), unfollow(), createPost(), sendRequest()
+├── [ ] Implement User.cpp      — follow(), unfollow(), createPost()
 ├── [ ] Implement Admin.cpp     — banUser(), deletePost(), viewAllUsers()
-├── [ ] Implement TextPost.cpp  — override display() to print text content
-├── [ ] Implement ImagePost.cpp — override display() to print image path + caption
+├── [ ] Implement TextPost.cpp  — override display() → print text content
+├── [ ] Implement ImagePost.cpp — override display() → print image path + caption
 ├── [ ] Implement Message.cpp   — send(), receive(), display()
-├── [ ] Write test main.cpp     — create users + posts, print feed to console
-└── [ ] Code review session — all 6 members review each other's .cpp files
+├── [ ] Write a test main() (plain console, no Qt) that:
+│         creates 2 users → user A follows B → B posts → print A's feed
+└── [ ] Code review: all 6 members review each other's implementations
 ```
 
-> **Deliverable:** Console prints "User created → Post created → Feed displayed" with zero crashes.
+> **Deliverable:** `g++ -o test main.cpp *.cpp && ./test` prints feed correctly.
 
 ---
 
 ### Phase 2 — Core Features `Week 3-4`
 
-> _Authentication system, file persistence, and the news feed engine._
+> _Authentication, file persistence, and the news feed engine._
 
 #### ✅ Week 3 — Auth System + File Handling
 
-**Goal:** Users can sign up, log in, and data persists across runs.
+**Goal:** Users can sign up, log in, and their data survives a restart.
 
 ```
 Tasks:
 ├── [ ] Implement AuthManager class
-│   ├── signup(name, email, password)   → validates + writes to users.dat
-│   ├── login(email, password)          → reads users.dat, validates hash
-│   └── deleteAccount(userID)           → removes entry from users.dat
+│   ├── signup(name, email, password)   → validate → save to users.dat
+│   ├── login(email, password)          → read users.dat → return User* or nullptr
+│   └── deleteAccount(userID)           → remove from users.dat
 │
 ├── [ ] Implement FileManager class (fstream wrapper)
-│   ├── saveUser(User&)         → serialize User to users.dat
-│   ├── loadAllUsers()          → deserialize → vector<User*>
-│   ├── savePost(Post&)         → serialize Post to posts.dat
-│   ├── loadAllPosts()          → deserialize → vector<Post*>
-│   └── saveGraph()             → serialize friendship adjacency list
+│   ├── saveUser(User&)          → serialize pipe-delimited line to users.dat
+│   ├── loadAllUsers()           → deserialize → vector<User*>
+│   ├── savePost(Post&)          → serialize to posts.dat
+│   ├── loadAllPosts()           → deserialize → vector<Post*>
+│   └── saveGraph()              → serialize friendship adjacency list
 │
-├── [ ] Agree on serialization format (pipe-delimited, see Data section)
-├── [ ] Hash passwords before storing (XOR cipher or custom hash)
-└── [ ] Test: create 3 users → close app → reopen → all 3 still exist ✔
+├── [ ] Agree on pipe-delimited format (see Data Storage section)
+├── [ ] Hash passwords before storing (simple XOR or djb2 hash is fine)
+└── [ ] Test: create 3 users → close → reopen → all 3 load from file ✔
 ```
 
-> **Deliverable:** Sign up, close the app, reopen, log in successfully with persisted data.
+> **Deliverable:** Persistence works end-to-end in console test. No GUI yet.
 
 ---
 
 #### ✅ Week 4 — News Feed Engine
 
-**Goal:** A logged-in user sees posts from people they follow, sorted by time.
+**Goal:** A user sees posts from people they follow, sorted newest first.
 
 ```
 Tasks:
 ├── [ ] Implement NewsFeed class
 │   ├── generateFeed(User* currentUser)
-│   │     → iterate following[], collect their posts, sort by timestamp DESC
+│   │     → iterate following[], collect posts, sort by timestamp DESC
 │   ├── addPost(Post*)
 │   └── removePost(postID)
 │
-├── [ ] Polymorphic rendering loop (KEY OOP MOMENT)
+├── [ ] Polymorphic rendering (KEY OOP MOMENT)
 │         for (Post* p : feed) p->display();   ← runtime polymorphism!
 │
 ├── [ ] Implement like(postID, userID) and unlike(postID, userID)
 ├── [ ] Implement addComment(postID, Comment{userID, text, timestamp})
-└── [ ] Test: A follows B → B creates post → A's feed shows it; C not following B → C's feed is empty
+└── [ ] Test: A follows B → B posts → A's feed has it; C not following → empty ✔
 ```
 
-> **Deliverable:** Feed correctly shows only posts from followed users, newest first.
+> **Deliverable:** Feed logic is correct and tested in console.
 
 ---
 
 ### Phase 3 — Social Engine `Week 5-6`
 
-> _Friend graph, private messaging, search, and notifications._
+> _Friend graph, private messaging, search, notifications._
 
 #### ✅ Week 5 — Friend Graph + Messaging
 
-**Goal:** Friend requests work end-to-end. Messages send and persist.
+**Goal:** Friend requests and private messages work end-to-end with persistence.
 
 ```
 Tasks:
 ├── [ ] Implement FriendGraph class
-│   ├── sendRequest(fromID, toID)   → writes pending entry to friends.dat
-│   ├── acceptRequest(requestID)    → updates status PENDING → ACCEPTED
-│   │                                  adds to both users' followers[] list
-│   ├── rejectRequest(requestID)    → removes entry from friends.dat
-│   └── getFriends(userID)          → returns vector<User*>
-│
-├── [ ] Save/load friendship graph on startup (adjacency list format)
+│   ├── sendRequest(fromID, toID)    → write PENDING entry to friends.dat
+│   ├── acceptRequest(requestID)     → update to ACCEPTED, add to followers[]
+│   ├── rejectRequest(requestID)     → remove entry
+│   └── getFriends(userID)           → return vector<User*>
 │
 ├── [ ] Implement MessageManager class
-│   ├── sendMessage(from, to, content)         → appends to messages.dat
-│   ├── getConversation(userA, userB)          → returns sorted vector<Message>
-│   └── getInbox(userID)                       → all unique conversation partners
+│   ├── sendMessage(from, to, content)      → append to messages.dat
+│   ├── getConversation(userA, userB)       → return sorted vector<Message>
+│   └── getInbox(userID)                    → all unique conversation partners
 │
-└── [ ] Test: A sends request → B accepts → both in each other's friends list ✔
-         A sends "hey" to B → stored in messages.dat → B can read it ✔
+└── [ ] Test: A sends request → B accepts → both in friends list ✔
+         A sends "hey" to B → persisted → B loads it on restart ✔
 ```
 
-> **Deliverable:** Complete friend request flow with persistent storage.
+> **Deliverable:** Complete friend + message flow with file persistence.
 
 ---
 
-#### ✅ Week 6 — Search, Notifications & Admin Tools
+#### ✅ Week 6 — Search, Notifications & Admin
 
-**Goal:** Search works. Admins can moderate. Notifications fire on events.
+**Goal:** Search, admin tools, and notifications all wired up.
 
 ```
 Tasks:
-├── [ ] Implement SearchEngine class
-│   ├── searchUsers(keyword)  → scan name/username fields → vector<User*>
-│   └── searchPosts(keyword)  → scan post content/captions → vector<Post*>
+├── [ ] Implement SearchEngine
+│   ├── searchUsers(keyword)   → scan name/username → vector<User*>
+│   └── searchPosts(keyword)   → scan content/captions → vector<Post*>
 │
 ├── [ ] Implement NotificationManager
-│   ├── notify(userID, type, message)  → appends to notifications.dat
-│   ├── getUnread(userID)              → vector<Notification> (isRead == false)
-│   └── markAllRead(userID)            → updates all entries in file
+│   ├── notify(userID, type, message)  → append to notifications.dat
+│   ├── getUnread(userID)              → vector<Notification>
+│   └── markAllRead(userID)            → update file
 │
-├── [ ] Hook notifications to system events:
-│   ├── Someone likes your post     → notify(ownerID, LIKE,    "X liked your post")
-│   ├── Someone comments            → notify(ownerID, COMMENT, "X commented: ...")
-│   └── Friend request received     → notify(toID,    REQUEST, "X sent you a request")
+├── [ ] Hook notifications to events:
+│   ├── Post liked         → notify(owner, LIKE,    "X liked your post")
+│   ├── Comment added      → notify(owner, COMMENT, "X commented: ...")
+│   └── Friend request     → notify(target, REQUEST, "X sent you a request")
 │
-├── [ ] Admin::banUser(userID)    — set isBanned=1 in users.dat, block their login
-├── [ ] Admin::deletePost(postID) — remove entry from posts.dat + update feed
-└── [ ] Admin::viewAllUsers()     — load and return full vector<User*>
+├── [ ] Admin::banUser(userID)    — set isBanned=1 in users.dat
+├── [ ] Admin::deletePost(postID) — remove from posts.dat + feed
+└── [ ] Admin::viewAllUsers()     — return full vector<User*>
 ```
 
-> **Deliverable:** Searching "ali" returns User Ali. Liking a post triggers a notification entry.
+> **Deliverable:** Full backend complete. All logic testable without GUI.
 
 ---
 
-### Phase 4 — GUI & Polish `Week 7-8`
+### Phase 4 — Qt GUI & Polish `Week 7-8`
 
-> _Wire all backend logic to WinForms. Every feature gets a screen._
+> _Wire all backend logic to Qt widgets. Build every screen._
 
-#### ✅ Week 7 — All WinForms Screens Built
+#### ✅ Week 7 — Qt Screens & Navigation
 
-**Goal:** Every feature has a working, navigable WinForms screen.
+**Goal:** Every feature has a working Qt widget. Navigation via `QStackedWidget`.
 
 ```
-Screens to build:
+MainWindow setup (do this first):
+├── [ ] Create MainWindow : QMainWindow
+│   ├── Add a QStackedWidget as the central widget
+│   ├── Create a Session singleton → holds User* currentUser
+│   └── Add a top nav bar (QToolBar or custom QWidget with QPushButton row)
+│         Buttons: Home | Search | Messages | Notifications | Profile | Logout
+
+Screens to build (each is a QWidget subclass):
 │
-├── LoginForm          — email field + password field + Login / Go to Signup buttons
-├── SignupForm         — name, email, password, confirm password + Signup button
-├── MainFeedForm       — scrollable Panel of posts; Like / Comment buttons per post
-│                         + top nav: Home | Search | Messages | Notifications | Profile
-├── ProfileForm        — avatar, bio, post grid, Follow/Unfollow button
-│                         (shows own profile OR another user's profile)
-├── CreatePostForm     — TabControl: "Text Post" tab | "Image Post" tab
-│                         Text tab: multiline TextBox + Post button
-│                         Image tab: OpenFileDialog picker + caption + Post button
-├── MessagesForm       — ListBox of conversations (left) + chat Panel (right)
-│                         TextBox at bottom + Send button
-├── SearchForm         — SearchBar (TextBox + Search button) + results ListBox
-│                         clicking a result opens ProfileForm
-├── NotificationsForm  — ListBox of all notifications, unread ones highlighted
-│                         "Mark all read" button at top
-└── AdminDashboard     — TabControl: "Users" tab | "Posts" tab
-                          Users: DataGridView with Ban button per row
-                          Posts: DataGridView with Delete button per row
-
-Architecture tips:
-  - Use a single MainForm with a Panel container; swap child panels for navigation
-    (avoids opening/closing windows constantly)
-  - Keep ALL business logic OUT of Form classes — forms only call Manager methods
-  - Pass the logged-in User* through forms using a Session singleton (Session::currentUser)
-  - Admins get redirected to AdminDashboard on login instead of MainFeedForm
+├── LoginPage
+│   ├── QLineEdit  → email
+│   ├── QLineEdit  → password (setEchoMode(QLineEdit::Password))
+│   ├── QPushButton "Login"   → calls AuthManager::login()
+│   │     on success: Session::set(user) → stack->setCurrentWidget(feedPage)
+│   │     on failure: QLabel shows "Incorrect email or password"
+│   └── QPushButton "Sign Up" → stack->setCurrentWidget(signupPage)
+│
+├── SignupPage
+│   ├── QLineEdit → name, email, password, confirm password
+│   ├── QPushButton "Create Account" → AuthManager::signup()
+│   └── QPushButton "Back to Login"
+│
+├── FeedPage
+│   ├── QScrollArea containing a QVBoxLayout of PostCard widgets
+│   │     PostCard is a custom QWidget: avatar | name | content | Like btn | Comment btn
+│   │     Like QPushButton emits signal → slot calls NewsFeed::like() → refreshFeed()
+│   └── QPushButton "New Post" → opens CreatePostDialog (QDialog)
+│
+├── CreatePostDialog (QDialog, not a full page)
+│   ├── QTabWidget: "Text Post" tab | "Image Post" tab
+│   │     Text tab: QTextEdit + QPushButton "Post"
+│   │     Image tab: QPushButton "Choose Image" (QFileDialog::getOpenFileName)
+│   │                + QLineEdit caption + QPushButton "Post"
+│   └── on Post: creates TextPost* or ImagePost* → FileManager::savePost() → emit postCreated()
+│
+├── ProfilePage
+│   ├── QLabel (avatar pixmap) + QLabel (name/bio)
+│   ├── QPushButton "Follow" / "Unfollow" (hidden on own profile)
+│   ├── QGridLayout of post thumbnails
+│   └── Reused for own profile AND other users' profiles
+│
+├── MessagesPage
+│   ├── QListWidget (left) → conversation partners
+│   │     clicking a name loads that conversation
+│   ├── QScrollArea (right) → chat bubbles (custom QWidget per message)
+│   ├── QLineEdit + QPushButton "Send"
+│   └── Send: MessageManager::sendMessage() → append bubble to scroll area
+│
+├── SearchPage
+│   ├── QLineEdit + QPushButton "Search"
+│   │     on search: SearchEngine::searchUsers() + searchPosts()
+│   ├── QListWidget → user results (click → open ProfilePage)
+│   └── QListWidget → post results
+│
+├── NotifsPage
+│   ├── QListWidget → all notifications (unread bold)
+│   └── QPushButton "Mark all read" → NotificationManager::markAllRead()
+│
+└── AdminPage (only shown when Admin logs in)
+    ├── QTabWidget: "Users" tab | "Posts" tab
+    │     Users tab: QTableWidget (name | email | banned) + "Ban" QPushButton per row
+    └───── Posts tab: QTableWidget (author | content preview) + "Delete" per row
 ```
 
-> **Deliverable:** Can click through every screen without exceptions or crashes.
+> **Deliverable:** Can navigate all screens. No crashes. Data displays correctly.
 
 ---
 
-#### ✅ Week 8 — Full Integration, Styling & Edge Cases
+#### ✅ Week 8 — Full Integration, QSS Styling & Edge Cases
 
-**Goal:** Data flows end-to-end between all screens. UI is clean and consistent.
+**Goal:** Everything connected. App looks polished. All edge cases handled.
 
 ```
-Tasks:
-├── [ ] LoginForm → AuthManager::login() → opens MainFeedForm or AdminDashboard
-├── [ ] CreatePost → FileManager::savePost() → NewsFeed::addPost() → refresh feed panel
-├── [ ] Like button → Post::addLike() → update file → NotificationManager::notify()
-├── [ ] Comment → addComment() → update file → notify owner
-├── [ ] MessagesForm → MessageManager::sendMessage() → persist → refresh conversation
-├── [ ] SearchForm → SearchEngine → populate ListBox → click → open ProfileForm
-├── [ ] NotificationsForm → NotificationManager::getUnread() → display + markRead
-├── [ ] Admin Ban → AuthManager::banUser() → confirm dialog → refresh user list
-├── [ ] Admin Delete Post → FileManager delete → NewsFeed remove → refresh
+Integration tasks:
+├── [ ] LoginPage  → AuthManager → Session::set() → switch to FeedPage or AdminPage
+├── [ ] FeedPage   → NewsFeed::generateFeed() → populate PostCard widgets
+├── [ ] Like btn   → NewsFeed::like() → update file → NotificationManager::notify()
+│                    → emit likeUpdated(postID) → PostCard refreshes count
+├── [ ] CreatePost → FileManager::savePost() → emit postCreated() → FeedPage refreshes
+├── [ ] Messages   → MessageManager::sendMessage() → append bubble → save to file
+├── [ ] Search     → SearchEngine → populate QListWidgets
+├── [ ] Notifs     → NotificationManager::getUnread() → populate list
+├── [ ] Admin ban  → AuthManager::banUser() → QMessageBox::question confirm → refresh table
 │
-├── [ ] Styling pass:
-│   ├── Consistent font (e.g. Segoe UI 10pt) across all forms
-│   ├── Color scheme: choose primary + accent color + background
-│   ├── Padding/margins on all controls (no elements touching edges)
-│   └── Hover cursor on buttons (Cursors::Hand)
+QSS Styling (style.qss loaded in main.cpp):
+├── [ ] QMainWindow, QWidget → background color scheme
+├── [ ] QPushButton → rounded corners, hover/pressed states
+│         QPushButton { border-radius: 8px; padding: 8px 16px; }
+│         QPushButton:hover { background-color: #0056b3; }
+├── [ ] QLineEdit → clean border, focus highlight
+├── [ ] PostCard custom widget → card shadow effect via border
+├── [ ] "Like" button → changes color when liked (setProperty + style().unpolish/polish)
 │
-├── [ ] Edge cases to handle:
-│   ├── Login with wrong password → show error label (don't crash)
-│   ├── Duplicate email on signup → "Email already registered"
-│   ├── Empty feed → show "No posts yet. Follow someone!"
-│   ├── No messages → show "No conversations yet"
-│   ├── Search returns nothing → show "No results found"
-│   └── Corrupted .dat file → catch exception, show error, don't crash
-│
-└── [ ] Memory: delete all heap Post* and User* pointers before app closes
+Edge cases:
+├── [ ] Wrong password → show red QLabel, don't crash
+├── [ ] Duplicate email signup → "Email already registered"
+├── [ ] Empty feed → centered QLabel "No posts yet. Follow someone!"
+├── [ ] No messages → "No conversations yet"
+├── [ ] Corrupted .dat → catch std::exception, show QMessageBox::warning
+└── [ ] Memory: call qDeleteAll() + clear() on all Post* / User* vectors at shutdown
 ```
 
-> **Deliverable:** Full end-to-end demo. Sign up → post → follow → message → admin bans.
+> **Deliverable:** Full end-to-end demo. Signup → post → follow → message → admin bans.
 
 ---
 
 ### Phase 5 — Testing & Submission `Week 9`
 
-> _Harden the system, write final docs, record demo, submit._
+> _Harden, document, record demo, submit._
 
-#### ✅ Week 9 — Testing, Docs & Submission
+#### ✅ Week 9 — Final Testing & Docs
 
 ```
 Testing checklist:
-├── [ ] Auth:        wrong password, duplicate signup, banned user tries login
-├── [ ] Feed:        follow/unfollow immediately affects feed output
-├── [ ] FileManager: delete .dat file manually → app recreates it gracefully
-├── [ ] Search:      empty query, special characters (!@#), no results case
-├── [ ] Notifications: like/comment/request all fire correct notification type
-├── [ ] Admin:       banning a user blocks their next login attempt
-└── [ ] Memory:      run full session, check no access violations on exit
+├── [ ] Auth:    wrong password, banned user login, duplicate signup
+├── [ ] Feed:    follow/unfollow immediately updates feed content
+├── [ ] Files:   delete .dat manually → app recreates gracefully on next run
+├── [ ] Search:  empty query, special characters, no-results case
+├── [ ] Notifs:  like/comment/request each fire the correct notification type
+├── [ ] Admin:   ban blocks the user's very next login attempt
+└── [ ] Memory:  full session run → no Qt warnings about deleted objects
 
 Documentation:
-├── [ ] Write inline comments on all class headers (public method docs)
-├── [ ] Finalize this README (add screenshots of each screen)
-├── [ ] Record 3-5 min demo video (screen recording)
-├── [ ] Write presentation slides (problem → design → demo → OOP concepts used)
-└── [ ] GitHub: push final build → tag release v1.0 → share repo link
+├── [ ] Inline comments on all class public methods
+├── [ ] Finalize README: add screenshots of each Qt screen
+├── [ ] Record 3–5 min demo video (screen recording, OBS or ShareX)
+├── [ ] Presentation slides: problem → OOP design → Qt architecture → live demo
+└── [ ] GitHub: final push → tag release v1.0 → share link with instructor
+```
+
+---
+
+## ⚡ Qt Concepts Used in Connectify
+
+```
+┌────────────────────────┬──────────────────────────────────────────────────────────────┐
+│   Qt Concept           │   Where It's Used                                            │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ Signals & Slots        │ Like button emits likeClicked(postID) → feed slot updates    │
+│                        │ New post created → FeedPage slot refreshes the scroll area   │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QStackedWidget         │ MainWindow holds all pages; setCurrentWidget() for nav       │
+│                        │ No window opens/closes — just page swaps                     │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ Custom QWidget         │ PostCard: a self-contained widget for each post in the feed  │
+│                        │ ChatBubble: a message widget for the conversation panel      │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QScrollArea            │ News feed and chat window scroll to show all content         │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QFileDialog            │ Image picker in CreatePostDialog for ImagePost uploads       │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QSS Stylesheets        │ Global style.qss loaded at startup for consistent theming    │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QTableWidget           │ Admin panel: sortable tables of users and posts              │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QMessageBox            │ Confirmation dialogs for ban/delete; error dialogs for auth  │
+├────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ QLabel + QPixmap       │ Displaying profile pictures and post images                  │
+└────────────────────────┴──────────────────────────────────────────────────────────────┘
+```
+
+**Signals & Slots example** (the core Qt OOP pattern):
+
+```cpp
+// In PostCard.h
+signals:
+    void likeClicked(int postID);
+    void commentClicked(int postID);
+
+// In PostCard.cpp — wire the button
+connect(likeBtn, &QPushButton::clicked, this, [this]() {
+    emit likeClicked(postID);
+});
+
+// In FeedPage.cpp — listen to the signal
+connect(card, &PostCard::likeClicked, this, &FeedPage::onLikeClicked);
+
+void FeedPage::onLikeClicked(int postID) {
+    newsFeed.like(postID, Session::current()->getUserID());
+    FileManager::instance().savePost(*newsFeed.getPost(postID));
+    NotificationManager::instance().notify(/* owner */, LIKE, "X liked your post");
+    refreshFeed(); // rebuild PostCard list
+}
 ```
 
 ---
@@ -441,18 +577,22 @@ Documentation:
 ```
 Connectify/
 │
+├── CMakeLists.txt              ← Qt's build system (replaces .pro file in Qt6)
+│
 ├── src/
-│   ├── models/                  ← all class definitions
+│   ├── main.cpp                ← QApplication + load style.qss + show MainWindow
+│   │
+│   ├── models/                 ← pure C++ classes, zero Qt dependency
 │   │   ├── Person.h / .cpp
 │   │   ├── User.h / .cpp
 │   │   ├── Admin.h / .cpp
-│   │   ├── Post.h               ← abstract, no .cpp
+│   │   ├── Post.h              ← abstract, no .cpp
 │   │   ├── TextPost.h / .cpp
 │   │   ├── ImagePost.h / .cpp
 │   │   ├── Message.h / .cpp
 │   │   └── Notification.h / .cpp
 │   │
-│   ├── managers/                ← business logic layer
+│   ├── managers/               ← business logic, also zero Qt dependency
 │   │   ├── AuthManager.h / .cpp
 │   │   ├── FileManager.h / .cpp
 │   │   ├── NewsFeed.h / .cpp
@@ -461,22 +601,28 @@ Connectify/
 │   │   ├── SearchEngine.h / .cpp
 │   │   └── NotificationManager.h / .cpp
 │   │
-│   ├── forms/                   ← WinForms UI layer (never put logic here)
-│   │   ├── LoginForm.h / .cpp
-│   │   ├── SignupForm.h / .cpp
-│   │   ├── MainFeedForm.h / .cpp
-│   │   ├── ProfileForm.h / .cpp
-│   │   ├── CreatePostForm.h / .cpp
-│   │   ├── MessagesForm.h / .cpp
-│   │   ├── SearchForm.h / .cpp
-│   │   ├── NotificationsForm.h / .cpp
-│   │   └── AdminDashboard.h / .cpp
+│   ├── ui/                     ← all Qt-dependent code lives here
+│   │   ├── MainWindow.h / .cpp      ← QMainWindow + QStackedWidget
+│   │   ├── Session.h                ← singleton: User* currentUser
+│   │   ├── pages/
+│   │   │   ├── LoginPage.h / .cpp
+│   │   │   ├── SignupPage.h / .cpp
+│   │   │   ├── FeedPage.h / .cpp
+│   │   │   ├── ProfilePage.h / .cpp
+│   │   │   ├── MessagesPage.h / .cpp
+│   │   │   ├── SearchPage.h / .cpp
+│   │   │   ├── NotifsPage.h / .cpp
+│   │   │   └── AdminPage.h / .cpp
+│   │   └── widgets/
+│   │       ├── PostCard.h / .cpp    ← custom QWidget for one post
+│   │       ├── ChatBubble.h / .cpp  ← custom QWidget for one message
+│   │       └── NavBar.h / .cpp      ← top navigation bar widget
 │   │
-│   └── utils/
-│       ├── Session.h            ← singleton: holds current User* across forms
-│       └── Hasher.h             ← simple password hashing utility
+│   └── resources/
+│       ├── style.qss               ← global Qt stylesheet
+│       └── resources.qrc           ← Qt resource file (icons, fonts)
 │
-├── data/                        ← auto-created on first run, never commit to git
+├── data/                           ← auto-created on first run (add to .gitignore)
 │   ├── users.dat
 │   ├── posts.dat
 │   ├── friends.dat
@@ -484,18 +630,37 @@ Connectify/
 │   └── notifications.dat
 │
 ├── assets/
-│   └── images/                  ← uploaded post images stored here
+│   ├── icons/                      ← UI icons (SVG or PNG)
+│   └── images/                     ← user-uploaded post images
 │
-├── Connectify.sln
-├── .gitignore                   ← add /data/* and /Debug/* and /Release/*
-└── README.md
+└── .gitignore                      ← include: /data/ /build/ *.user *.pro.user
+```
+
+**`CMakeLists.txt` starter:**
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(Connectify VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "src/*.h")
+
+qt_add_executable(Connectify ${SOURCES} ${HEADERS} src/resources/resources.qrc)
+target_link_libraries(Connectify PRIVATE Qt6::Widgets)
 ```
 
 ---
 
 ## 💾 Data Storage Format
 
-Each `.dat` file uses **pipe-delimited plain text** for easy `fstream` parsing with `getline` and `stringstream`.
+Each `.dat` file uses **pipe-delimited plain text** for easy `std::fstream` parsing.
 
 **`users.dat`**
 
@@ -534,15 +699,15 @@ msgID|senderID|receiverID|content|timestamp
 ```
 notifID|ownerID|type|message|isRead|timestamp
 4001|1002|LIKE|Ali liked your post|0|1714903000
-4002|1001|REQUEST|Farzam sent you a friend request|1|1714904000
+4002|1001|REQUEST|Farzam sent a friend request|1|1714904000
 ```
 
-**Reading example (C++):**
+**Parsing example (C++ with fstream):**
 
 ```cpp
 ifstream file("data/users.dat");
 string line;
-getline(file, line); // skip header
+getline(file, line); // skip header row
 while (getline(file, line)) {
     stringstream ss(line);
     string id, name, email, hash, banned, pic;
@@ -564,9 +729,10 @@ while (getline(file, line)) {
 
 ### Prerequisites
 
-- **Visual Studio 2022** with "Desktop development with C++" workload
-- **.NET Framework 4.8** (for WinForms/CLI)
-- **Windows 10 or 11**
+- **Qt 6.x** (Community Edition — free): https://www.qt.io/download-open-source
+  - During install select: Qt 6.x → Desktop (MinGW 64-bit) + Qt Creator
+- **CMake 3.16+** (bundled with Qt installer)
+- **Compiler:** MinGW (Windows) or GCC/Clang (Linux/macOS)
 
 ### Steps
 
@@ -575,22 +741,39 @@ while (getline(file, line)) {
 git clone https://github.com/your-team/connectify.git
 cd connectify
 
-# 2. Open solution in Visual Studio
-start Connectify.sln
+# Option A — Qt Creator (recommended for beginners)
+#   File → Open File or Project → select CMakeLists.txt
+#   Click the Run button (Ctrl+R)
 
-# 3. Set build configuration
-#    Build menu → Configuration Manager → Debug | x64
+# Option B — Command line
+mkdir build && cd build
+cmake .. -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x.x/mingw_64
+cmake --build . --parallel
 
-# 4. Build the solution
-#    Ctrl + Shift + B
-
-# 5. Run
-#    F5  (with debugger)
-#    Ctrl + F5  (without debugger, recommended for demo)
+# Run
+./Connectify          # Linux/macOS
+Connectify.exe        # Windows
 ```
 
 > The `/data` directory is auto-created on first launch.  
-> Default admin credentials: `admin@connectify.com` / `admin123`
+> Default admin: `admin@connectify.com` / `admin123`
+
+### Loading the QSS stylesheet in `main.cpp`
+
+```cpp
+int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+
+    QFile styleFile(":/resources/style.qss");
+    if (styleFile.open(QFile::ReadOnly)) {
+        app.setStyleSheet(styleFile.readAll());
+    }
+
+    MainWindow window;
+    window.show();
+    return app.exec();
+}
+```
 
 ---
 
@@ -603,33 +786,34 @@ start Connectify.sln
 
 | Role           | Name             | Roll No  | Primary Responsibilities                  |
 | -------------- | ---------------- | -------- | ----------------------------------------- |
-| 👑 Team Leader | Ali Abdullah     | 25L-3022 | Architecture, AuthManager, Integration    |
-| 👨‍💻 Member      | Farzam Zeeshan   | 25L-3049 | NewsFeed, Post classes, Polymorphism      |
-| 👨‍💻 Member      | Mustafa Amir     | 25L-3107 | FriendGraph, MessageManager               |
+| 👑 Team Leader | Ali Abdullah     | 25L-3022 | Architecture, AuthManager, Qt MainWindow  |
+| 👨‍💻 Member      | Farzam Zeeshan   | 25L-3049 | NewsFeed, Post classes, FeedPage          |
+| 👨‍💻 Member      | Mustafa Amir     | 25L-3107 | FriendGraph, MessageManager, MessagesPage |
 | 👨‍💻 Member      | M. Arslan        | 25L-3080 | FileManager, Data Persistence             |
-| 👨‍💻 Member      | Saad Amin        | 25L-3045 | WinForms GUI, SearchEngine                |
-| 👨‍💻 Member      | Muhammad Khubaib | 25L-3026 | NotificationManager, Admin Tools, Testing |
+| 👨‍💻 Member      | Saad Amin        | 25L-3045 | QSS Styling, SearchPage, NotifsPage       |
+| 👨‍💻 Member      | Muhammad Khubaib | 25L-3026 | NotificationManager, AdminPage, Testing   |
 
 ---
 
 ## 📊 Progress Tracker
 
-| Phase   | Description                          | Week | Status         |
-| ------- | ------------------------------------ | ---- | -------------- |
-| Phase 1 | Foundation — Classes & Project Setup | 1-2  | 🔲 Not Started |
-| Phase 2 | Core — Auth, File I/O, News Feed     | 3-4  | 🔲 Not Started |
-| Phase 3 | Social — Friends, Messages, Search   | 5-6  | 🔲 Not Started |
-| Phase 4 | GUI — All WinForms Screens           | 7-8  | 🔲 Not Started |
-| Phase 5 | Testing, Docs & Submission           | 9    | 🔲 Not Started |
+| Phase   | Description                        | Week       | Status         |
+| ------- | ---------------------------------- | ---------- | -------------- |
+| Phase 0 | Qt Installation & Setup            | Pre-Week 1 | 🔲 Not Started |
+| Phase 1 | Foundation — Classes & Project     | 1-2        | 🔲 Not Started |
+| Phase 2 | Core — Auth, File I/O, NewsFeed    | 3-4        | 🔲 Not Started |
+| Phase 3 | Social — Friends, Messages, Search | 5-6        | 🔲 Not Started |
+| Phase 4 | Qt GUI — All Pages + Styling       | 7-8        | 🔲 Not Started |
+| Phase 5 | Testing, Docs & Submission         | 9          | 🔲 Not Started |
 
-> Replace `🔲 Not Started` with `🔄 In Progress` or `✅ Done` as you go!
+> Update `🔲 Not Started` → `🔄 In Progress` → `✅ Done` as you go!
 
 ---
 
 <div align="center">
 
 ```
-Built with ❤️ and way too many pointer errors
+Built with ❤️ and way too many signal-slot connections
 ```
 
 **NUCES — National University of Computer and Emerging Sciences**
