@@ -1,0 +1,259 @@
+/* ═══════════════════════════════════════════════════
+   Connectify — Global QSS Stylesheet
+   ═══════════════════════════════════════════════════ */
+
+/* ── Base ──────────────────────────────────────────── */
+QMainWindow, QWidget {
+    background-color: #f0f2f5;
+    color: #1c1e21;
+    font-family: "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+}
+
+/* ── Navbar ────────────────────────────────────────── */
+QFrame#navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddfe2;
+}
+
+QLabel#brand {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1877f2;
+}
+
+QPushButton#navBtn {
+    background: transparent;
+    border: none;
+    color: #65676b;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+QPushButton#navBtn:hover {
+    background-color: #f0f2f5;
+    color: #1877f2;
+}
+
+/* ── Card ──────────────────────────────────────────── */
+QFrame#card {
+    background-color: #ffffff;
+    border: 1px solid #dddfe2;
+    border-radius: 10px;
+}
+
+/* ── Input fields ──────────────────────────────────── */
+QLineEdit#inputField {
+    background-color: #f0f2f5;
+    border: 1.5px solid #dddfe2;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #1c1e21;
+}
+QLineEdit#inputField:focus {
+    border-color: #1877f2;
+    background-color: #ffffff;
+}
+
+/* ── Buttons ───────────────────────────────────────── */
+QPushButton#primaryBtn {
+    background-color: #1877f2;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+QPushButton#primaryBtn:hover {
+    background-color: #166fe5;
+}
+QPushButton#primaryBtn:pressed {
+    background-color: #1464d2;
+}
+
+QPushButton#secondaryBtn {
+    background-color: #e4e6eb;
+    color: #1c1e21;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+}
+QPushButton#secondaryBtn:hover {
+    background-color: #d8dadf;
+}
+
+QPushButton#dangerBtn {
+    background-color: #fa3e3e;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+}
+QPushButton#dangerBtn:hover {
+    background-color: #e03535;
+}
+
+QPushButton#linkBtn {
+    background: transparent;
+    border: none;
+    color: #1877f2;
+    font-size: 14px;
+    padding: 4px 0px;
+}
+QPushButton#linkBtn:hover {
+    color: #166fe5;
+    text-decoration: underline;
+}
+
+/* ── Labels ────────────────────────────────────────── */
+QLabel#title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1c1e21;
+}
+
+QLabel#errorLabel {
+    color: #fa3e3e;
+    font-size: 13px;
+}
+
+QLabel#emptyLabel {
+    color: #65676b;
+    font-size: 16px;
+    padding: 40px;
+}
+
+QLabel#profileName {
+    font-size: 20px;
+    font-weight: bold;
+}
+QLabel#profileEmail {
+    color: #65676b;
+}
+QLabel#profileStats {
+    color: #65676b;
+    font-size: 13px;
+}
+
+/* ── Post Card ─────────────────────────────────────── */
+QFrame#postCard {
+    background-color: #ffffff;
+    border: 1px solid #dddfe2;
+    border-radius: 10px;
+}
+QLabel#postMeta {
+    color: #65676b;
+    font-size: 12px;
+}
+QLabel#postContent {
+    font-size: 15px;
+    color: #1c1e21;
+    padding: 4px 0;
+}
+
+QPushButton#likeBtn,
+QPushButton#commentBtn {
+    background: transparent;
+    border: 1px solid #dddfe2;
+    border-radius: 6px;
+    padding: 4px 12px;
+    color: #65676b;
+    font-size: 13px;
+}
+QPushButton#likeBtn:hover,
+QPushButton#commentBtn:hover {
+    background-color: #f0f2f5;
+}
+QPushButton#likeBtn:checked {
+    color: #e0245e;
+    border-color: #e0245e;
+}
+
+/* ── Chat Bubbles ──────────────────────────────────── */
+QLabel#bubbleMine {
+    background-color: #1877f2;
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 8px 14px;
+    font-size: 14px;
+}
+QLabel#bubbleTheirs {
+    background-color: #e4e6eb;
+    color: #1c1e21;
+    border-radius: 16px;
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+/* ── Lists ─────────────────────────────────────────── */
+QListWidget#inboxList {
+    background-color: #ffffff;
+    border-right: 1px solid #dddfe2;
+    border-radius: 0;
+}
+QListWidget#inboxList::item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f2f5;
+}
+QListWidget#inboxList::item:selected {
+    background-color: #e7f3ff;
+    color: #1877f2;
+}
+
+QListWidget#notifList::item {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f2f5;
+}
+QListWidget#notifList::item:selected {
+    background-color: #e7f3ff;
+}
+
+/* ── Tables ────────────────────────────────────────── */
+QTableWidget {
+    background-color: #ffffff;
+    gridline-color: #f0f2f5;
+    border: none;
+}
+QHeaderView::section {
+    background-color: #f0f2f5;
+    color: #65676b;
+    font-weight: bold;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #dddfe2;
+}
+
+/* ── Tabs ──────────────────────────────────────────── */
+QTabBar::tab {
+    padding: 8px 20px;
+    border: none;
+    color: #65676b;
+}
+QTabBar::tab:selected {
+    color: #1877f2;
+    border-bottom: 2px solid #1877f2;
+    font-weight: bold;
+}
+QTabBar::tab:hover {
+    color: #1877f2;
+}
+
+/* ── Scroll bars ───────────────────────────────────── */
+QScrollBar:vertical {
+    width: 6px;
+    background: transparent;
+}
+QScrollBar::handle:vertical {
+    background: #c4c7cc;
+    border-radius: 3px;
+    min-height: 30px;
+}
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar:horizontal { height: 0; }

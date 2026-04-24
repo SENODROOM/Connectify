@@ -1,6 +1,0 @@
-├── data/                        ← auto-created on first run, never commit to git
-│   ├── users.dat
-│   ├── posts.dat
-│   ├── friends.dat
-│   ├── messages.dat
-│   └── notifications.dat
