@@ -1,0 +1,10 @@
+│   ├── forms/                   ← WinForms UI layer (never put logic here)
+│   │   ├── LoginForm.h / .cpp
+│   │   ├── SignupForm.h / .cpp
+│   │   ├── MainFeedForm.h / .cpp
+│   │   ├── ProfileForm.h / .cpp
+│   │   ├── CreatePostForm.h / .cpp
+│   │   ├── MessagesForm.h / .cpp
+│   │   ├── SearchForm.h / .cpp
+│   │   ├── NotificationsForm.h / .cpp
+│   │   └── AdminDashboard.h / .cpp

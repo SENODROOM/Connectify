@@ -1,0 +1,3 @@
+│   └── utils/
+│       ├── Session.h            ← singleton: holds current User* across forms
+│       └── Hasher.h             ← simple password hashing utility

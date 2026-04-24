@@ -1,0 +1,9 @@
+│   ├── models/                  ← all class definitions
+│   │   ├── Person.h / .cpp
+│   │   ├── User.h / .cpp
+│   │   ├── Admin.h / .cpp
+│   │   ├── Post.h               ← abstract, no .cpp
+│   │   ├── TextPost.h / .cpp
+│   │   ├── ImagePost.h / .cpp
+│   │   ├── Message.h / .cpp
+│   │   └── Notification.h / .cpp

@@ -1,0 +1,8 @@
+│   ├── managers/                ← business logic layer
+│   │   ├── AuthManager.h / .cpp
+│   │   ├── FileManager.h / .cpp
+│   │   ├── NewsFeed.h / .cpp
+│   │   ├── FriendGraph.h / .cpp
+│   │   ├── MessageManager.h / .cpp
+│   │   ├── SearchEngine.h / .cpp
+│   │   └── NotificationManager.h / .cpp
