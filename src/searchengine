@@ -1,0 +1,107 @@
+﻿#include "SearchEngine.h"
+#include "../models/TextPost.h"
+#include "../models/ImagePost.h"
+#include <algorithm>
+#include <cctype>
+ 
+// ─── Helper ───────────────────────────────────────────────────────────────────
+ 
+std::string SearchEngine::toLower(const std::string& s) {
+    std::string out = s;
+    std::transform(out.begin(), out.end(), out.begin(), ::tolower);
+    return out;
+}
+ 
+// ─── Search Users ─────────────────────────────────────────────────────────────
+ 
+User** SearchEngine::searchUsers(const std::string& keyword,
+                                 User** allUsers, int userCount,
+                                 int& resultCount) {
+    resultCount = 0;
+ 
+    if (keyword.empty() || !allUsers || userCount == 0)
+        return nullptr;
+ 
+    std::string kw = toLower(keyword);
+ 
+    // First pass: count matches
+    int matchCount = 0;
+    for (int i = 0; i < userCount; i++) {
+        if (toLower(allUsers[i]->getName()).find(kw)  != std::string::npos ||
+            toLower(allUsers[i]->getEmail()).find(kw) != std::string::npos)
+            matchCount++;
+    }
+ 
+    if (matchCount == 0)
+        return nullptr;
+ 
+    // Allocate exact size
+    User** results = new User*[matchCount];
+ 
+    // Second pass: fill matches
+    int idx = 0;
+    for (int i = 0; i < userCount; i++) {
+        if (toLower(allUsers[i]->getName()).find(kw)  != std::string::npos ||
+            toLower(allUsers[i]->getEmail()).find(kw) != std::string::npos)
+            results[idx++] = allUsers[i];
+    }
+ 
+    resultCount = matchCount;
+    return results;
+}
+ 
+// ─── Search Posts ─────────────────────────────────────────────────────────────
+ 
+Post** SearchEngine::searchPosts(const std::string& keyword,
+                                 User** allUsers, int userCount,
+                                 int& resultCount) {
+    resultCount = 0;
+ 
+    if (keyword.empty() || !allUsers || userCount == 0)
+        return nullptr;
+ 
+    std::string kw = toLower(keyword);
+ 
+    // First pass: count total matching posts across all users
+    int matchCount = 0;
+    for (int i = 0; i < userCount; i++) {
+        Post** posts = allUsers[i]->getPosts();
+        int postCount = allUsers[i]->getPostCount();
+        for (int j = 0; j < postCount; j++) {
+            std::string content;
+            if (auto* tp = dynamic_cast<TextPost*>(posts[j]))
+                content = toLower(tp->getContent());
+            else if (auto* ip = dynamic_cast<ImagePost*>(posts[j]))
+                content = toLower(ip->getCaption());
+ 
+            if (content.find(kw) != std::string::npos)
+                matchCount++;
+        }
+    }
+ 
+    if (matchCount == 0)
+        return nullptr;
+ 
+    // Allocate exact size
+    Post** results = new Post*[matchCount];
+ 
+    // Second pass: fill matches
+    int idx = 0;
+    for (int i = 0; i < userCount; i++) {
+        Post** posts = allUsers[i]->getPosts();
+        int postCount = allUsers[i]->getPostCount();
+        for (int j = 0; j < postCount; j++) {
+            std::string content;
+            if (auto* tp = dynamic_cast<TextPost*>(posts[j]))
+                content = toLower(tp->getContent());
+            else if (auto* ip = dynamic_cast<ImagePost*>(posts[j]))
+                content = toLower(ip->getCaption());
+ 
+            if (content.find(kw) != std::string::npos)
+                results[idx++] = posts[j];
+        }
+    }
+ 
+    resultCount = matchCount;
+    return results;
+}
