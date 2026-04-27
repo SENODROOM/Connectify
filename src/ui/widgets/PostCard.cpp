@@ -8,70 +8,45 @@
 #include <QDateTime>
 
 PostCard::PostCard(Post* post, User* currentUser, QWidget* parent)
-    : QWidget(parent), post_(post), currentUser_(currentUser)
-{
-    setupUI();
-}
+    : QWidget(parent), post_(post), currentUser_(currentUser), likeBtn_(nullptr)
+{ setupUI(); }
 
 void PostCard::setupUI() {
-    auto* card = new QFrame();
-    card->setObjectName("postCard");
-    auto* outer = new QVBoxLayout(this);
-    outer->setContentsMargins(0, 0, 0, 0);
-    outer->addWidget(card);
+    auto* card = new QFrame(); card->setObjectName("postCard");
+    auto* outer = new QVBoxLayout(this); outer->setContentsMargins(0,0,0,0); outer->addWidget(card);
+    auto* lay = new QVBoxLayout(card); lay->setContentsMargins(16,12,16,12); lay->setSpacing(8);
 
-    auto* layout = new QVBoxLayout(card);
-    layout->setContentsMargins(16, 12, 16, 12);
-    layout->setSpacing(8);
-
-    // Author + timestamp
     User* owner = AuthManager::instance().findUser(post_->getOwnerID());
-    QString authorName = owner ? QString::fromStdString(owner->getName()) : "Unknown";
-    QString ts = QDateTime::fromSecsSinceEpoch(post_->getTimestamp()).toString("MMM d · hh:mm");
+    QString author = owner ? QString::fromStdString(owner->getName()) : "Unknown";
+    QString ts     = QDateTime::fromSecsSinceEpoch(post_->getTimestamp()).toString("MMM d · hh:mm");
+    auto* meta = new QLabel(author + "  ·  " + ts); meta->setObjectName("postMeta");
+    lay->addWidget(meta);
 
-    metaLabel_ = new QLabel(authorName + "  ·  " + ts);
-    metaLabel_->setObjectName("postMeta");
-    layout->addWidget(metaLabel_);
-
-    // Content
     std::string content;
-    if (auto* tp = dynamic_cast<TextPost*>(post_))
-        content = tp->getContent();
-    else if (auto* ip = dynamic_cast<ImagePost*>(post_))
-        content = "📷  " + ip->getCaption();
+    if (auto* tp = dynamic_cast<TextPost*>(post_))       content = tp->getContent();
+    else if (auto* ip = dynamic_cast<ImagePost*>(post_)) content = "📷  " + ip->getCaption();
+    auto* contentLbl = new QLabel(QString::fromStdString(content));
+    contentLbl->setObjectName("postContent"); contentLbl->setWordWrap(true);
+    lay->addWidget(contentLbl);
 
-    contentLabel_ = new QLabel(QString::fromStdString(content));
-    contentLabel_->setObjectName("postContent");
-    contentLabel_->setWordWrap(true);
-    layout->addWidget(contentLabel_);
+    auto* actions = new QHBoxLayout(); actions->setSpacing(8);
+    likeBtn_ = new QPushButton(); likeBtn_->setObjectName("likeBtn"); likeBtn_->setCheckable(true);
+    updateLike();
+    actions->addWidget(likeBtn_);
 
-    // Action row
-    auto* actionRow = new QHBoxLayout();
-    actionRow->setSpacing(8);
+    auto* commentBtn = new QPushButton(QString("💬  %1").arg(post_->getComments().size()));
+    commentBtn->setObjectName("commentBtn");
+    actions->addWidget(commentBtn);
+    actions->addStretch();
+    lay->addLayout(actions);
 
-    likeBtn_ = new QPushButton();
-    likeBtn_->setObjectName("likeBtn");
-    likeBtn_->setCheckable(true);
-    updateLikeButton();
-    actionRow->addWidget(likeBtn_);
-
-    commentBtn_ = new QPushButton(QString("💬  %1").arg(post_->getComments().size()));
-    commentBtn_->setObjectName("commentBtn");
-    actionRow->addWidget(commentBtn_);
-
-    actionRow->addStretch();
-    layout->addLayout(actionRow);
-
-    connect(likeBtn_, &QPushButton::toggled, this, [this](bool checked) {
+    connect(likeBtn_, &QPushButton::toggled, this, [this](bool checked){
         emit likeToggled(post_->getPostID(), checked);
-        updateLikeButton();
-    });
-    connect(commentBtn_, &QPushButton::clicked, this, [this]() {
-        emit commentClicked(post_->getPostID());
+        updateLike();
     });
 }
 
-void PostCard::updateLikeButton() {
+void PostCard::updateLike() {
     bool liked = currentUser_ && post_->isLikedBy(currentUser_->getID());
     likeBtn_->setChecked(liked);
     likeBtn_->setText(liked

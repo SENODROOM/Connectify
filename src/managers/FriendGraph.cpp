@@ -1,9 +1,8 @@
 #include "FriendGraph.h"
 #include <fstream>
 #include <sstream>
-#include <algorithm>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 
 const std::string FriendGraph::REQUESTS_FILE = "data/friend_requests.dat";
 
@@ -12,61 +11,58 @@ FriendGraph& FriendGraph::instance() {
     return fg;
 }
 
-User* FriendGraph::findUser(int id, const std::vector<User*>& users) const {
-    for (User* u : users) if (u->getID() == id) return u;
-    return nullptr;
-}
-
-void FriendGraph::sendRequest(int fromID, int toID, std::vector<User*>& allUsers) {
-    // Avoid duplicate pending requests
-    for (const auto& r : requests_)
-        if (r.fromID == fromID && r.toID == toID && r.status == "PENDING") return;
-
-    FriendRequest req{ ++lastRequestID_, fromID, toID, "PENDING" };
-    requests_.push_back(req);
-    saveRequests();
-    std::cout << "[FriendGraph] Request #" << req.requestID << " sent.\n";
-}
-
-void FriendGraph::acceptRequest(int requestID, std::vector<User*>& allUsers) {
-    for (auto& r : requests_) {
-        if (r.requestID == requestID && r.status == "PENDING") {
-            r.status = "ACCEPTED";
-            User* from = findUser(r.fromID, allUsers);
-            User* to   = findUser(r.toID,   allUsers);
-            if (from && to) {
-                from->follow(to->getID());
-                to->addFollower(from->getID());
-            }
-            saveRequests();
+void FriendGraph::sendRequest(int fromID, int toID) {
+    // Avoid duplicate pending
+    RequestNode* cur = requests_.head();
+    while (cur) {
+        if (cur->fromID == fromID && cur->toID == toID && cur->status == "PENDING")
             return;
-        }
+        cur = cur->next;
     }
+    RequestNode* node = new RequestNode(++lastRequestID_, fromID, toID, "PENDING");
+    requests_.append(node);
+    saveRequests();
+}
+
+void FriendGraph::acceptRequest(int requestID, UserTable& allUsers) {
+    RequestNode* node = requests_.findByID(requestID);
+    if (!node || node->status != "PENDING") return;
+    node->status = "ACCEPTED";
+
+    User* from = allUsers.findByID(node->fromID);
+    User* to   = allUsers.findByID(node->toID);
+    if (from && to) {
+        from->follow(to->getID());
+        to->addFollower(from->getID());
+    }
+    saveRequests();
 }
 
 void FriendGraph::rejectRequest(int requestID) {
-    for (auto& r : requests_) {
-        if (r.requestID == requestID) { r.status = "REJECTED"; break; }
-    }
+    RequestNode* node = requests_.findByID(requestID);
+    if (node) node->status = "REJECTED";
     saveRequests();
 }
 
-std::vector<FriendRequest> FriendGraph::getPendingFor(int userID) const {
-    std::vector<FriendRequest> pending;
-    for (const auto& r : requests_)
-        if (r.toID == userID && r.status == "PENDING") pending.push_back(r);
-    return pending;
-}
-
-std::vector<User*> FriendGraph::getFriends(int userID, const std::vector<User*>& allUsers) const {
-    User* u = findUser(userID, allUsers);
-    if (!u) return {};
-    std::vector<User*> friends;
-    for (int fid : u->getFollowing()) {
-        User* f = findUser(fid, allUsers);
-        if (f) friends.push_back(f);
+RequestNode** FriendGraph::getPendingFor(int userID, int& count) const {
+    // Count first
+    count = 0;
+    RequestNode* cur = requests_.head();
+    while (cur) {
+        if (cur->toID == userID && cur->status == "PENDING") ++count;
+        cur = cur->next;
     }
-    return friends;
+    if (count == 0) return nullptr;
+
+    RequestNode** arr = new RequestNode*[count];
+    int idx = 0;
+    cur = requests_.head();
+    while (cur) {
+        if (cur->toID == userID && cur->status == "PENDING")
+            arr[idx++] = cur;
+        cur = cur->next;
+    }
+    return arr;
 }
 
 void FriendGraph::loadRequests() {
@@ -85,9 +81,11 @@ void FriendGraph::loadRequests() {
         std::getline(ss, to,     '|');
         std::getline(ss, status, '|');
         try {
-            FriendRequest r{ std::stoi(rid), std::stoi(from), std::stoi(to), status };
-            requests_.push_back(r);
-            if (r.requestID > lastRequestID_) lastRequestID_ = r.requestID;
+            int ridi = std::stoi(rid);
+            RequestNode* node = new RequestNode(ridi, std::stoi(from),
+                                                std::stoi(to), status);
+            requests_.append(node);
+            if (ridi > lastRequestID_) lastRequestID_ = ridi;
         } catch (...) {}
     }
 }
@@ -96,6 +94,10 @@ void FriendGraph::saveRequests() const {
     std::filesystem::create_directories("data");
     std::ofstream f(REQUESTS_FILE);
     f << "requestID|fromID|toID|status\n";
-    for (const auto& r : requests_)
-        f << r.requestID << '|' << r.fromID << '|' << r.toID << '|' << r.status << '\n';
+    RequestNode* cur = requests_.head();
+    while (cur) {
+        f << cur->requestID << '|' << cur->fromID << '|'
+          << cur->toID      << '|' << cur->status << '\n';
+        cur = cur->next;
+    }
 }

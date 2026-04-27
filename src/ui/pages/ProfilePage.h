@@ -9,21 +9,16 @@ class ProfilePage : public QWidget {
 public:
     explicit ProfilePage(QWidget* parent = nullptr);
     void loadUser(int userID);
-
 signals:
     void goBack();
-
 private:
     void setupUI();
     void buildPosts();
-
-    int      viewedUserID_ = -1;
-
+    int          viewedUserID_;
     QLabel*      nameLabel_;
     QLabel*      emailLabel_;
     QLabel*      statsLabel_;
     QPushButton* followBtn_;
-    QPushButton* backBtn_;
-    QWidget*     postsContainer_;
     QVBoxLayout* postsLayout_;
+    QWidget*     postsContainer_;
 };

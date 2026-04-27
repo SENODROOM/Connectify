@@ -1,17 +1,23 @@
 #pragma once
-#include "../models/User.h"
+#include "../models/UserTable.h"
 #include "../models/Post.h"
-#include <vector>
 #include <string>
 
+// Results are raw pointer arrays — caller must delete[] (NOT the items)
 class SearchEngine {
 public:
-    static std::vector<User*> searchUsers(const std::string& keyword,
-                                          const std::vector<User*>& allUsers);
+    // Returns heap array of matching User* — caller must delete[]
+    static User** searchUsers(const std::string& keyword,
+                              const UserTable& allUsers,
+                              int& count);
 
-    static std::vector<Post*> searchPosts(const std::string& keyword,
-                                          const std::vector<User*>& allUsers);
+    // Returns heap array of matching Post* — caller must delete[]
+    static Post** searchPosts(const std::string& keyword,
+                              const UserTable& allUsers,
+                              int& count);
 
 private:
     static std::string toLower(const std::string& s);
+    static bool        contains(const std::string& haystack,
+                                const std::string& needle);
 };

@@ -1,6 +1,5 @@
 #include "NotificationManager.h"
 #include "FileManager.h"
-#include <algorithm>
 
 NotificationManager& NotificationManager::instance() {
     static NotificationManager nm;
@@ -8,33 +7,61 @@ NotificationManager& NotificationManager::instance() {
 }
 
 void NotificationManager::loadAll() {
-    notifs_ = FileManager::instance().loadAllNotifications();
-    for (const auto& n : notifs_)
-        if (n.notifID > lastID_) lastID_ = n.notifID;
+    FileManager::instance().loadAllNotifications(notifs_);
+    NotifNode* cur = notifs_.head();
+    while (cur) {
+        if (cur->notifID > lastID_) lastID_ = cur->notifID;
+        cur = cur->next;
+    }
 }
 
-void NotificationManager::notify(int ownerID, NotifType type, const std::string& message) {
-    Notification n{ ++lastID_, ownerID, type, message, false, time(nullptr) };
-    notifs_.push_back(n);
-    FileManager::instance().saveNotification(n);
-}
-
-std::vector<Notification> NotificationManager::getUnread(int userID) const {
-    std::vector<Notification> out;
-    for (const auto& n : notifs_)
-        if (n.ownerID == userID && !n.isRead) out.push_back(n);
-    return out;
-}
-
-std::vector<Notification> NotificationManager::getAll(int userID) const {
-    std::vector<Notification> out;
-    for (const auto& n : notifs_)
-        if (n.ownerID == userID) out.push_back(n);
-    return out;
+void NotificationManager::notify(int ownerID, NotifType type,
+                                  const std::string& message) {
+    NotifNode* node = new NotifNode(++lastID_, ownerID, type, message, time(nullptr));
+    notifs_.append(node);
+    FileManager::instance().appendNotification(node);
 }
 
 void NotificationManager::markAllRead(int userID) {
-    for (auto& n : notifs_)
-        if (n.ownerID == userID) n.isRead = true;
+    NotifNode* cur = notifs_.head();
+    while (cur) {
+        if (cur->ownerID == userID) cur->isRead = true;
+        cur = cur->next;
+    }
     FileManager::instance().saveAllNotifications(notifs_);
+}
+
+NotifNode** NotificationManager::getAll(int userID, int& count) const {
+    count = 0;
+    NotifNode* cur = notifs_.head();
+    while (cur) { if (cur->ownerID == userID) ++count; cur = cur->next; }
+    if (count == 0) return nullptr;
+
+    NotifNode** arr = new NotifNode*[count];
+    int idx = 0;
+    cur = notifs_.head();
+    while (cur) {
+        if (cur->ownerID == userID) arr[idx++] = cur;
+        cur = cur->next;
+    }
+    return arr;
+}
+
+NotifNode** NotificationManager::getUnread(int userID, int& count) const {
+    count = 0;
+    NotifNode* cur = notifs_.head();
+    while (cur) {
+        if (cur->ownerID == userID && !cur->isRead) ++count;
+        cur = cur->next;
+    }
+    if (count == 0) return nullptr;
+
+    NotifNode** arr = new NotifNode*[count];
+    int idx = 0;
+    cur = notifs_.head();
+    while (cur) {
+        if (cur->ownerID == userID && !cur->isRead) arr[idx++] = cur;
+        cur = cur->next;
+    }
+    return arr;
 }

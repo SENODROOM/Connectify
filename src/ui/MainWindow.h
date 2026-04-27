@@ -13,7 +13,6 @@ class AdminPage;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow() override;
@@ -33,13 +32,12 @@ private:
     void setupPages();
 
     QStackedWidget* stack_;
-
-    LoginPage*    loginPage_    = nullptr;
-    SignupPage*   signupPage_   = nullptr;
-    FeedPage*     feedPage_     = nullptr;
-    ProfilePage*  profilePage_  = nullptr;
-    MessagesPage* messagesPage_ = nullptr;
-    SearchPage*   searchPage_   = nullptr;
-    NotifsPage*   notifsPage_   = nullptr;
-    AdminPage*    adminPage_    = nullptr;
+    LoginPage*      loginPage_;
+    SignupPage*     signupPage_;
+    FeedPage*       feedPage_;
+    ProfilePage*    profilePage_;
+    MessagesPage*   messagesPage_;
+    SearchPage*     searchPage_;
+    NotifsPage*     notifsPage_;
+    AdminPage*      adminPage_;
 };

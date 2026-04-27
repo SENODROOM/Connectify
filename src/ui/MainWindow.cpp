@@ -12,15 +12,18 @@
 #include "../managers/MessageManager.h"
 #include "../managers/NotificationManager.h"
 #include "../managers/FriendGraph.h"
-#include <QApplication>
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+      stack_(nullptr),
+      loginPage_(nullptr), signupPage_(nullptr),
+      feedPage_(nullptr),  profilePage_(nullptr),
+      messagesPage_(nullptr), searchPage_(nullptr),
+      notifsPage_(nullptr),   adminPage_(nullptr)
 {
     setWindowTitle("Connectify");
-    setMinimumSize(900, 650);
+    setMinimumSize(940, 660);
 
-    // Load all data on startup
     AuthManager::instance().loadAll();
     MessageManager::instance().loadAll();
     NotificationManager::instance().loadAll();
@@ -28,7 +31,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     stack_ = new QStackedWidget(this);
     setCentralWidget(stack_);
-
     setupPages();
     showLogin();
 }
@@ -56,12 +58,11 @@ void MainWindow::setupPages() {
     stack_->addWidget(notifsPage_);
     stack_->addWidget(adminPage_);
 
-    // Wire navigation signals
-    connect(loginPage_,    &LoginPage::goToSignup,   this, &MainWindow::showSignup);
+    connect(loginPage_,    &LoginPage::goToSignup,    this, &MainWindow::showSignup);
     connect(loginPage_,    &LoginPage::loginSuccess,  this, &MainWindow::showFeed);
     connect(loginPage_,    &LoginPage::adminLogin,    this, &MainWindow::showAdmin);
     connect(signupPage_,   &SignupPage::goToLogin,    this, &MainWindow::showLogin);
-    connect(signupPage_,   &SignupPage::signupSuccess, this, &MainWindow::showFeed);
+    connect(signupPage_,   &SignupPage::signupSuccess,this, &MainWindow::showFeed);
 
     connect(feedPage_,     &FeedPage::goToProfile,   this, &MainWindow::showProfile);
     connect(feedPage_,     &FeedPage::goToMessages,  this, &MainWindow::showMessages);
@@ -72,54 +73,23 @@ void MainWindow::setupPages() {
     connect(profilePage_,  &ProfilePage::goBack,     this, &MainWindow::showFeed);
     connect(messagesPage_, &MessagesPage::goBack,    this, &MainWindow::showFeed);
     connect(searchPage_,   &SearchPage::goBack,      this, &MainWindow::showFeed);
+    connect(searchPage_,   &SearchPage::openProfile, this, &MainWindow::showProfile);
     connect(notifsPage_,   &NotifsPage::goBack,      this, &MainWindow::showFeed);
     connect(adminPage_,    &AdminPage::logout,       this, &MainWindow::logout);
 }
 
-void MainWindow::showLogin() {
-    Session::instance().clear();
-    loginPage_->reset();
-    stack_->setCurrentWidget(loginPage_);
-}
-
-void MainWindow::showSignup() {
-    signupPage_->reset();
-    stack_->setCurrentWidget(signupPage_);
-}
-
-void MainWindow::showFeed() {
-    feedPage_->refresh();
-    stack_->setCurrentWidget(feedPage_);
-}
-
+void MainWindow::showLogin()  { Session::instance().clear(); loginPage_->reset(); stack_->setCurrentWidget(loginPage_); }
+void MainWindow::showSignup() { signupPage_->reset(); stack_->setCurrentWidget(signupPage_); }
+void MainWindow::showFeed()   { feedPage_->refresh(); stack_->setCurrentWidget(feedPage_); }
 void MainWindow::showProfile(int userID) {
-    profilePage_->loadUser(userID == -1
-        ? Session::instance().current()->getID()
-        : userID);
+    int id = (userID == -1 && Session::instance().current())
+             ? Session::instance().current()->getID()
+             : userID;
+    profilePage_->loadUser(id);
     stack_->setCurrentWidget(profilePage_);
 }
-
-void MainWindow::showMessages() {
-    messagesPage_->refresh();
-    stack_->setCurrentWidget(messagesPage_);
-}
-
-void MainWindow::showSearch() {
-    searchPage_->clear();
-    stack_->setCurrentWidget(searchPage_);
-}
-
-void MainWindow::showNotifs() {
-    notifsPage_->refresh();
-    stack_->setCurrentWidget(notifsPage_);
-}
-
-void MainWindow::showAdmin() {
-    adminPage_->refresh();
-    stack_->setCurrentWidget(adminPage_);
-}
-
-void MainWindow::logout() {
-    AuthManager::instance().saveAll();
-    showLogin();
-}
+void MainWindow::showMessages() { messagesPage_->refresh(); stack_->setCurrentWidget(messagesPage_); }
+void MainWindow::showSearch()   { searchPage_->clear();     stack_->setCurrentWidget(searchPage_);   }
+void MainWindow::showNotifs()   { notifsPage_->refresh();   stack_->setCurrentWidget(notifsPage_);   }
+void MainWindow::showAdmin()    { adminPage_->refresh();    stack_->setCurrentWidget(adminPage_);    }
+void MainWindow::logout()       { AuthManager::instance().saveAll(); showLogin(); }

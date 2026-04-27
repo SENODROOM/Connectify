@@ -9,21 +9,15 @@ class LoginPage : public QWidget {
 public:
     explicit LoginPage(QWidget* parent = nullptr);
     void reset();
-
 signals:
     void loginSuccess();
     void adminLogin();
     void goToSignup();
-
 private slots:
     void onLogin();
-
 private:
     void setupUI();
-
-    QLineEdit*  emailEdit_;
-    QLineEdit*  passwordEdit_;
-    QLabel*     errorLabel_;
-    QPushButton* loginBtn_;
-    QPushButton* signupBtn_;
+    QLineEdit*   emailEdit_;
+    QLineEdit*   passwordEdit_;
+    QLabel*      errorLabel_;
 };

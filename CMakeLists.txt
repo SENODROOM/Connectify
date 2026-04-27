@@ -19,5 +19,4 @@ qt_add_executable(Connectify
 )
 
 target_link_libraries(Connectify PRIVATE Qt6::Widgets)
-
 target_include_directories(Connectify PRIVATE src)

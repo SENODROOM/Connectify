@@ -1,41 +1,36 @@
 #pragma once
-#include "../models/User.h"
+#include "../models/UserTable.h"
 #include "../models/Admin.h"
-#include <vector>
-#include <string>
 
 class AuthManager {
 public:
     static AuthManager& instance();
 
-    // Returns User* on success, nullptr on failure
     User*  login(const std::string& email, const std::string& password);
     bool   isAdminLogin(const std::string& email, const std::string& password);
-
-    User*  signup(const std::string& name, const std::string& email, const std::string& password);
+    User*  signup(const std::string& name, const std::string& email,
+                  const std::string& password);
     bool   deleteAccount(int userID);
 
-    void   banUser(int userID);
-    void   unbanUser(int userID);
+    void loadAll();
+    void saveAll();
 
-    void   loadAll();   // call on app start
-    void   saveAll();   // call on app exit / after mutations
+    const UserTable& getUsers() const { return users_; }
+    UserTable&       getUsers()       { return users_; }
 
-    const std::vector<User*>& getUsers() const { return users_; }
-    User* findUser(int id) const;
-    User* findUserByEmail(const std::string& email) const;
-
-    Admin* getAdmin() const { return admin_; }
+    User*  findUser(int id)                  const { return users_.findByID(id); }
+    User*  findByEmail(const std::string& e) const { return users_.findByEmail(e); }
+    Admin* getAdmin()                        const { return admin_; }
 
     int nextUserID() { return ++lastUserID_; }
 
 private:
     AuthManager();
     ~AuthManager();
-    AuthManager(const AuthManager&) = delete;
+    AuthManager(const AuthManager&)            = delete;
     AuthManager& operator=(const AuthManager&) = delete;
 
-    std::vector<User*> users_;
-    Admin*             admin_    = nullptr;
-    int                lastUserID_ = 1000;
+    UserTable users_;
+    Admin*    admin_      = nullptr;
+    int       lastUserID_ = 1000;
 };

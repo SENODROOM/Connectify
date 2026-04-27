@@ -1,7 +1,6 @@
 /build/
+/data/
 *.user
-*.pro.user
-*.qmlc
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake

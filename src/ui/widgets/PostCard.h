@@ -9,20 +9,12 @@ class PostCard : public QWidget {
     Q_OBJECT
 public:
     PostCard(Post* post, User* currentUser, QWidget* parent = nullptr);
-
 signals:
     void likeToggled(int postID, bool liked);
-    void commentClicked(int postID);
-
 private:
     void setupUI();
-    void updateLikeButton();
-
-    Post* post_;
-    User* currentUser_;
-
-    QLabel*      contentLabel_;
-    QLabel*      metaLabel_;
+    void updateLike();
+    Post*        post_;
+    User*        currentUser_;
     QPushButton* likeBtn_;
-    QPushButton* commentBtn_;
 };

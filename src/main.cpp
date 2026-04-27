@@ -8,7 +8,6 @@ int main(int argc, char* argv[]) {
     app.setApplicationVersion("1.0");
     app.setOrganizationName("Team05-BSE2B");
 
-    // Load global QSS stylesheet
     QFile styleFile(":/resources/style.qss");
     if (styleFile.open(QFile::ReadOnly)) {
         app.setStyleSheet(styleFile.readAll());
@@ -17,6 +16,5 @@ int main(int argc, char* argv[]) {
 
     MainWindow window;
     window.show();
-
     return app.exec();
 }

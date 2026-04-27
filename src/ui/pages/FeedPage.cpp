@@ -9,108 +9,69 @@
 #include <QHBoxLayout>
 #include <QScrollArea>
 #include <QFrame>
+#include <QPushButton>
 
-FeedPage::FeedPage(QWidget* parent) : QWidget(parent) {
-    setupUI();
-}
+FeedPage::FeedPage(QWidget* parent) : QWidget(parent) { setupUI(); }
 
 void FeedPage::setupUI() {
     auto* root = new QVBoxLayout(this);
-    root->setContentsMargins(0, 0, 0, 0);
-    root->setSpacing(0);
+    root->setContentsMargins(0,0,0,0); root->setSpacing(0);
 
-    // ── NavBar ──────────────────────────────────────────────────────────
-    auto* nav = new QFrame();
-    nav->setObjectName("navbar");
-    auto* navLayout = new QHBoxLayout(nav);
-    navLayout->setContentsMargins(16, 8, 16, 8);
-
-    auto* brand = new QLabel("Connectify");
-    brand->setObjectName("brand");
-    navLayout->addWidget(brand);
-    navLayout->addStretch();
-
-    auto* feedBtn     = new QPushButton("Feed");
-    auto* searchBtn   = new QPushButton("Search");
-    auto* messagesBtn = new QPushButton("Messages");
-    auto* notifsBtn   = new QPushButton("Notifications");
-    auto* profileBtn  = new QPushButton("Profile");
-    auto* logoutBtn   = new QPushButton("Logout");
-
-    for (auto* b : {feedBtn, searchBtn, messagesBtn, notifsBtn, profileBtn})
-        b->setObjectName("navBtn");
-    logoutBtn->setObjectName("dangerBtn");
-
-    navLayout->addWidget(feedBtn);
-    navLayout->addWidget(searchBtn);
-    navLayout->addWidget(messagesBtn);
-    navLayout->addWidget(notifsBtn);
-    navLayout->addWidget(profileBtn);
-    navLayout->addWidget(logoutBtn);
-
+    // Navbar
+    auto* nav = new QFrame(); nav->setObjectName("navbar");
+    auto* navL = new QHBoxLayout(nav); navL->setContentsMargins(16,8,16,8);
+    auto* brand = new QLabel("Connectify"); brand->setObjectName("brand");
+    navL->addWidget(brand); navL->addStretch();
+    auto* mkBtn = [](const QString& t, const QString& obj) {
+        auto* b = new QPushButton(t); b->setObjectName(obj); return b;
+    };
+    auto* searchBtn   = mkBtn("Search",        "navBtn");
+    auto* msgsBtn     = mkBtn("Messages",      "navBtn");
+    auto* notifsBtn   = mkBtn("Notifications", "navBtn");
+    auto* profileBtn  = mkBtn("Profile",       "navBtn");
+    auto* logoutBtn   = mkBtn("Logout",        "dangerBtn");
+    for (auto* b : {searchBtn, msgsBtn, notifsBtn, profileBtn}) navL->addWidget(b);
+    navL->addWidget(logoutBtn);
     root->addWidget(nav);
 
-    connect(searchBtn,   &QPushButton::clicked, this, &FeedPage::goToSearch);
-    connect(messagesBtn, &QPushButton::clicked, this, &FeedPage::goToMessages);
-    connect(notifsBtn,   &QPushButton::clicked, this, &FeedPage::goToNotifs);
-    connect(profileBtn,  &QPushButton::clicked, this, [this](){
-        emit goToProfile(-1);
-    });
-    connect(logoutBtn,   &QPushButton::clicked, this, &FeedPage::logout);
+    connect(searchBtn,  &QPushButton::clicked, this, &FeedPage::goToSearch);
+    connect(msgsBtn,    &QPushButton::clicked, this, &FeedPage::goToMessages);
+    connect(notifsBtn,  &QPushButton::clicked, this, &FeedPage::goToNotifs);
+    connect(profileBtn, &QPushButton::clicked, this, [this]{ emit goToProfile(-1); });
+    connect(logoutBtn,  &QPushButton::clicked, this, &FeedPage::logout);
 
-    // ── Create Post ─────────────────────────────────────────────────────
-    auto* composer = new QFrame();
-    composer->setObjectName("card");
-    auto* compLayout = new QHBoxLayout(composer);
-    compLayout->setContentsMargins(16, 12, 16, 12);
+    // Composer
+    auto* composer = new QFrame(); composer->setObjectName("card");
+    auto* compL = new QHBoxLayout(composer); compL->setContentsMargins(16,12,16,12);
+    postInput_ = new QLineEdit(); postInput_->setPlaceholderText("What's on your mind?"); postInput_->setObjectName("inputField");
+    auto* postBtn = new QPushButton("Post"); postBtn->setObjectName("primaryBtn");
+    compL->addWidget(postInput_); compL->addWidget(postBtn);
 
-    postInput_ = new QLineEdit();
-    postInput_->setPlaceholderText("What's on your mind?");
-    postInput_->setObjectName("inputField");
-    compLayout->addWidget(postInput_);
+    // Center column
+    auto* center = new QWidget();
+    auto* centerL = new QVBoxLayout(center);
+    centerL->setContentsMargins(120,16,120,16); centerL->setSpacing(12);
+    centerL->addWidget(composer);
 
-    postBtn_ = new QPushButton("Post");
-    postBtn_->setObjectName("primaryBtn");
-    compLayout->addWidget(postBtn_);
-
-    auto* centerWidget = new QWidget();
-    auto* centerLayout = new QVBoxLayout(centerWidget);
-    centerLayout->setContentsMargins(120, 16, 120, 16);
-    centerLayout->setSpacing(12);
-    centerLayout->addWidget(composer);
-
-    // ── Feed scroll area ────────────────────────────────────────────────
-    auto* scroll = new QScrollArea();
-    scroll->setWidgetResizable(true);
-    scroll->setObjectName("feedScroll");
-    scroll->setFrameShape(QFrame::NoFrame);
-
+    // Scroll
+    auto* scroll = new QScrollArea(); scroll->setWidgetResizable(true); scroll->setFrameShape(QFrame::NoFrame);
     feedContainer_ = new QWidget();
     feedLayout_    = new QVBoxLayout(feedContainer_);
-    feedLayout_->setAlignment(Qt::AlignTop);
-    feedLayout_->setSpacing(12);
-    feedLayout_->setContentsMargins(120, 0, 120, 16);
-
+    feedLayout_->setAlignment(Qt::AlignTop); feedLayout_->setSpacing(12); feedLayout_->setContentsMargins(0,0,0,16);
     emptyLabel_ = new QLabel("No posts yet. Follow someone!");
-    emptyLabel_->setObjectName("emptyLabel");
-    emptyLabel_->setAlignment(Qt::AlignCenter);
+    emptyLabel_->setObjectName("emptyLabel"); emptyLabel_->setAlignment(Qt::AlignCenter);
     feedLayout_->addWidget(emptyLabel_);
-
     scroll->setWidget(feedContainer_);
+    centerL->addWidget(scroll);
+    root->addWidget(center, 1);
 
-    centerLayout->addWidget(scroll);
-    root->addWidget(centerWidget, 1);
-
-    connect(postBtn_,  &QPushButton::clicked,       this, &FeedPage::onCreatePost);
-    connect(postInput_, &QLineEdit::returnPressed,  this, &FeedPage::onCreatePost);
+    connect(postBtn,   &QPushButton::clicked,      this, &FeedPage::onCreatePost);
+    connect(postInput_,&QLineEdit::returnPressed,  this, &FeedPage::onCreatePost);
 }
 
-void FeedPage::refresh() {
-    buildFeed();
-}
+void FeedPage::refresh() { buildFeed(); }
 
 void FeedPage::clearFeed() {
-    // Remove all PostCard widgets but keep emptyLabel_
     QLayoutItem* item;
     while ((item = feedLayout_->takeAt(0)) != nullptr) {
         if (item->widget() && item->widget() != emptyLabel_)
@@ -121,37 +82,34 @@ void FeedPage::clearFeed() {
 
 void FeedPage::buildFeed() {
     clearFeed();
-
     User* me = Session::instance().current();
     if (!me) return;
 
-    auto& users = AuthManager::instance().getUsers();
+    FeedSnapshot snap;
     NewsFeed nf;
-    auto feed = nf.generateFeed(me, users);
+    nf.generate(me, AuthManager::instance().getUsers(), snap);
 
-    if (feed.empty()) {
+    if (snap.size() == 0) {
         feedLayout_->addWidget(emptyLabel_);
         emptyLabel_->setVisible(true);
         return;
     }
-
     emptyLabel_->setVisible(false);
-    for (Post* p : feed) {
+
+    for (int i = 0; i < snap.size(); ++i) {
+        Post* p    = snap[i];
         auto* card = new PostCard(p, me, this);
-        connect(card, &PostCard::likeToggled, this, [this, p, me](int postID, bool liked) {
-            auto& us = AuthManager::instance().getUsers();
-            NewsFeed nf2;
+        connect(card, &PostCard::likeToggled, this, [this, p, me](int /*pid*/, bool liked) {
             if (liked) {
-                nf2.like(postID, me->getID(), const_cast<std::vector<User*>&>(us));
-                // notify post owner
+                p->like(me->getID());
                 User* owner = AuthManager::instance().findUser(p->getOwnerID());
                 if (owner && owner->getID() != me->getID())
                     NotificationManager::instance().notify(
-                        owner->getID(), NotifType::LIKE,
-                        me->getName() + " liked your post.");
+                        owner->getID(), NotifType::LIKE, me->getName() + " liked your post.");
             } else {
-                nf2.unlike(postID, me->getID(), const_cast<std::vector<User*>&>(us));
+                p->unlike(me->getID());
             }
+            FileManager::instance().saveAllPosts(AuthManager::instance().getUsers());
         });
         feedLayout_->addWidget(card);
     }
@@ -160,21 +118,13 @@ void FeedPage::buildFeed() {
 void FeedPage::onCreatePost() {
     QString text = postInput_->text().trimmed();
     if (text.isEmpty()) return;
-
     User* me = Session::instance().current();
     if (!me) return;
 
-    auto& users = const_cast<std::vector<User*>&>(AuthManager::instance().getUsers());
-
-    int maxID = 2000;
-    for (User* u : users)
-        for (Post* p : u->getPosts())
-            if (p->getPostID() > maxID) maxID = p->getPostID();
-
-    Post* newPost = new TextPost(maxID + 1, me->getID(), text.toStdString());
-    me->addPost(newPost);
-    FileManager::instance().saveAllPosts(users);
-
+    int pid = NewsFeed::nextPostID(AuthManager::instance().getUsers());
+    Post* p = new TextPost(pid, me->getID(), text.toStdString());
+    me->addPost(p);
+    FileManager::instance().saveAllPosts(AuthManager::instance().getUsers());
     postInput_->clear();
     buildFeed();
 }

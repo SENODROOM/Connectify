@@ -1,20 +1,18 @@
 #pragma once
 #include "Person.h"
-#include "User.h"
-#include "Post.h"
-#include <vector>
-#include <string>
+#include "UserTable.h"
 
 class Admin : public Person {
 public:
-    Admin(int id, const std::string& name, const std::string& email,
+    Admin(int id, const std::string& name,
+          const std::string& email,
           const std::string& hashedPassword);
 
     std::string getRole() const override { return "ADMIN"; }
 
     // Admin-only actions
-    void banUser(User* user);
-    void unbanUser(User* user);
-    bool deletePost(int postID, std::vector<User*>& allUsers);
-    std::vector<User*> viewAllUsers(const std::vector<User*>& allUsers) const;
+    void banUser(User* u)   { if (u) u->setBanned(true);  }
+    void unbanUser(User* u) { if (u) u->setBanned(false); }
+
+    bool deletePost(int postID, UserTable& allUsers);
 };

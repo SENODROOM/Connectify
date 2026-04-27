@@ -1,10 +1,7 @@
 #pragma once
-#include "../models/User.h"
-#include "../models/Admin.h"
-#include "../models/Post.h"
+#include "../models/UserTable.h"
 #include "../models/Message.h"
 #include "../models/Notification.h"
-#include <vector>
 #include <string>
 
 class FileManager {
@@ -12,33 +9,34 @@ public:
     static FileManager& instance();
 
     // Users
-    void             saveAllUsers(const std::vector<User*>& users);
-    std::vector<User*> loadAllUsers();
+    void saveAllUsers(const UserTable& users);
+    void loadAllUsers(UserTable& users);
 
-    // Posts
-    void             saveAllPosts(const std::vector<User*>& users);
-    void             loadAllPosts(std::vector<User*>& users);
+    // Posts (loads into existing users)
+    void saveAllPosts(const UserTable& users);
+    void loadAllPosts(UserTable& users);
 
-    // Friends graph
-    void             saveFriends(const std::vector<User*>& users);
-    void             loadFriends(std::vector<User*>& users);
+    // Follow graph
+    void saveFriends(const UserTable& users);
+    void loadFriends(UserTable& users);
 
     // Messages
-    void               saveMessage(const Message& msg);
-    std::vector<Message> loadAllMessages();
+    void saveMessage(int msgID, int senderID, int receiverID,
+                     const std::string& content, time_t ts);
+    void loadAllMessages(MessageList& list);
 
     // Notifications
-    void                      saveNotification(const Notification& n);
-    void                      saveAllNotifications(const std::vector<Notification>& notifs);
-    std::vector<Notification> loadAllNotifications();
+    void saveAllNotifications(const NotifList& list);
+    void appendNotification(const NotifNode* node);
+    void loadAllNotifications(NotifList& list);
 
     // Utility
-    static std::string hashPassword(const std::string& password);
+    static std::string hashPassword(const std::string& pw);
     void ensureDataDir();
 
 private:
     FileManager() = default;
-    FileManager(const FileManager&) = delete;
+    FileManager(const FileManager&)            = delete;
     FileManager& operator=(const FileManager&) = delete;
 
     static const std::string DATA_DIR;
@@ -48,5 +46,5 @@ private:
     static const std::string MESSAGES_FILE;
     static const std::string NOTIFS_FILE;
 
-    User* findUser(const std::vector<User*>& users, int id) const;
+    static std::string sanitize(const std::string& s);
 };

@@ -1,21 +1,15 @@
 #include "AuthManager.h"
 #include "FileManager.h"
-#include <algorithm>
 #include <iostream>
 
-// Default admin credentials
-static const std::string ADMIN_EMAIL = "admin@connectify.com";
-static const std::string ADMIN_PASS_HASH = ""; // set after hashing "admin123"
-
 AuthManager::AuthManager() {
-    // Create the hardcoded admin account
     std::string adminHash = FileManager::hashPassword("admin123");
-    admin_ = new Admin(1, "Administrator", ADMIN_EMAIL, adminHash);
+    admin_ = new Admin(1, "Administrator", "admin@connectify.com", adminHash);
 }
 
 AuthManager::~AuthManager() {
     delete admin_;
-    for (User* u : users_) delete u;
+    for (int i = 0; i < users_.size(); ++i) delete users_[i];
 }
 
 AuthManager& AuthManager::instance() {
@@ -24,14 +18,13 @@ AuthManager& AuthManager::instance() {
 }
 
 void AuthManager::loadAll() {
-    for (User* u : users_) delete u;
-    users_ = FileManager::instance().loadAllUsers();
+    FileManager::instance().loadAllUsers(users_);
     FileManager::instance().loadAllPosts(users_);
     FileManager::instance().loadFriends(users_);
 
-    // Determine highest existing ID
-    for (User* u : users_)
-        if (u->getID() > lastUserID_) lastUserID_ = u->getID();
+    for (int i = 0; i < users_.size(); ++i)
+        if (users_[i]->getID() > lastUserID_)
+            lastUserID_ = users_[i]->getID();
 }
 
 void AuthManager::saveAll() {
@@ -42,12 +35,10 @@ void AuthManager::saveAll() {
 
 User* AuthManager::login(const std::string& email, const std::string& password) {
     std::string hash = FileManager::hashPassword(password);
-    for (User* u : users_) {
+    for (int i = 0; i < users_.size(); ++i) {
+        User* u = users_[i];
         if (u->getEmail() == email && u->getHashedPassword() == hash) {
-            if (u->isBanned()) {
-                std::cerr << "[Auth] Account is banned.\n";
-                return nullptr;
-            }
+            if (u->isBanned()) { std::cerr << "[Auth] Account banned.\n"; return nullptr; }
             return u;
         }
     }
@@ -61,52 +52,23 @@ bool AuthManager::isAdminLogin(const std::string& email, const std::string& pass
 }
 
 User* AuthManager::signup(const std::string& name, const std::string& email,
-                          const std::string& password) {
-    // Check for duplicate email
-    if (findUserByEmail(email)) {
-        std::cerr << "[Auth] Email already registered.\n";
-        return nullptr;
-    }
-    if (name.empty() || email.empty() || password.size() < 6) {
-        std::cerr << "[Auth] Invalid signup data.\n";
-        return nullptr;
-    }
-    int id = nextUserID();
+                           const std::string& password) {
+    if (findByEmail(email)) { std::cerr << "[Auth] Email exists.\n"; return nullptr; }
+    if (name.empty() || email.empty() || password.size() < 6) return nullptr;
+
+    int   id   = nextUserID();
     std::string hash = FileManager::hashPassword(password);
-    User* u = new User(id, name, email, hash);
-    users_.push_back(u);
+    User* u    = new User(id, name, email, hash);
+    users_.add(u);
     saveAll();
     return u;
 }
 
 bool AuthManager::deleteAccount(int userID) {
-    auto it = std::find_if(users_.begin(), users_.end(),
-                           [userID](User* u){ return u->getID() == userID; });
-    if (it == users_.end()) return false;
-    delete *it;
-    users_.erase(it);
+    User* u = findUser(userID);
+    if (!u) return false;
+    users_.remove(userID);
+    delete u;
     saveAll();
     return true;
-}
-
-void AuthManager::banUser(int userID) {
-    User* u = findUser(userID);
-    if (u) { u->setBanned(true); saveAll(); }
-}
-
-void AuthManager::unbanUser(int userID) {
-    User* u = findUser(userID);
-    if (u) { u->setBanned(false); saveAll(); }
-}
-
-User* AuthManager::findUser(int id) const {
-    for (User* u : users_)
-        if (u->getID() == id) return u;
-    return nullptr;
-}
-
-User* AuthManager::findUserByEmail(const std::string& email) const {
-    for (User* u : users_)
-        if (u->getEmail() == email) return u;
-    return nullptr;
 }
