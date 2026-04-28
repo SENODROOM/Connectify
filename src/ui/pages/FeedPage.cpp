@@ -22,15 +22,15 @@ void FeedPage::setupUI() {
     auto* navL = new QHBoxLayout(nav); navL->setContentsMargins(16,8,16,8);
     auto* brand = new QLabel("Connectify"); brand->setObjectName("brand");
     navL->addWidget(brand); navL->addStretch();
-    auto* mkBtn = [](const QString& t, const QString& obj) {
-        auto* b = new QPushButton(t); b->setObjectName(obj); return b;
-    };
-    auto* searchBtn   = mkBtn("Search",        "navBtn");
-    auto* msgsBtn     = mkBtn("Messages",      "navBtn");
-    auto* notifsBtn   = mkBtn("Notifications", "navBtn");
-    auto* profileBtn  = mkBtn("Profile",       "navBtn");
-    auto* logoutBtn   = mkBtn("Logout",        "dangerBtn");
-    for (auto* b : {searchBtn, msgsBtn, notifsBtn, profileBtn}) navL->addWidget(b);
+    auto* searchBtn   = new QPushButton("Search");        searchBtn->setObjectName("navBtn");
+    auto* msgsBtn     = new QPushButton("Messages");      msgsBtn->setObjectName("navBtn");
+    auto* notifsBtn   = new QPushButton("Notifications"); notifsBtn->setObjectName("navBtn");
+    auto* profileBtn  = new QPushButton("Profile");       profileBtn->setObjectName("navBtn");
+    auto* logoutBtn   = new QPushButton("Logout");        logoutBtn->setObjectName("dangerBtn");
+    navL->addWidget(searchBtn);
+    navL->addWidget(msgsBtn);
+    navL->addWidget(notifsBtn);
+    navL->addWidget(profileBtn);
     navL->addWidget(logoutBtn);
     root->addWidget(nav);
 
